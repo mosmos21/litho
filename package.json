@@ -10,6 +10,7 @@
     "check": "run-s check:*",
     "check:eslint": "eslint . --ext ts,tsx --ignore-path .gitignore",
     "check:prettier": "prettier . --ignore-path .gitignore --check",
+    "check:types": "tsc",
     "fix": "run-s fix:*",
     "fix:eslint": "eslint . --ext ts,tsx --ignore-path .gitignore --fix --cache",
     "fix:prettier": "prettier . --ignore-path .gitignore --write --cache",
