@@ -1,0 +1,17 @@
+name: Type check / Lint
+
+on:
+  pull_request:
+  pull_request_target:
+
+jobs:
+  type_check_and_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          python-version: 20
+          cache: "npm"
+      - run: npm ci
+      - run: npm run check
