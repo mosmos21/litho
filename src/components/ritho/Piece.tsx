@@ -1,13 +1,8 @@
-import {
-  chakra,
-  BackgroundProps,
-  Icon,
-  ColorProps,
-  shouldForwardProp,
-} from "@chakra-ui/react";
+import { BackgroundProps, Icon, ColorProps, Box } from "@chakra-ui/react";
 import { PieceType, PieceColor } from "@/types/ritho";
 import { FaChessKing } from "react-icons/fa";
-import { motion, isValidMotionProp } from "framer-motion";
+import { useDrag } from "react-dnd";
+import { ItemType } from "@/utils/reactDnd.ts";
 
 const BACKGROUND: Record<PieceColor, BackgroundProps["bg"]> = {
   Black: "gray.600",
@@ -24,32 +19,40 @@ type Props = {
   type: PieceType;
   color: PieceColor;
   drag?: boolean;
+  onDragStart: () => void;
 };
 
-export const Piece = (props: Props) => (
-  <Root
-    bg={BACKGROUND[props.color]}
-    width={`${props.size}px`}
-    height={`${props.size}px`}
-    borderRadius="4px"
-    alignItems="center"
-    justifyContent="center"
-    cursor="pointer"
-    display="flex"
-    drag={props.drag}
-    whileHover={{ scale: 1.1 }}
-  >
-    {props.type === "King" && (
-      <Icon
-        as={FaChessKing}
-        boxSize={`${props.size / 2}px`}
-        color={ICON_COLOR[props.color]}
-      />
-    )}
-  </Root>
-);
+export const Piece = (props: Props) => {
+  const [_, dragRef] = useDrag(
+    () => ({
+      type: ItemType.PIECE,
+      item: () => {
+        props.onDragStart();
+        return {};
+      },
+    }),
+    [props.onDragStart]
+  );
 
-const Root = chakra(motion.div, {
-  shouldForwardProp: (props) =>
-    isValidMotionProp(props) || shouldForwardProp(props),
-});
+  return (
+    <Box
+      ref={dragRef}
+      bg={BACKGROUND[props.color]}
+      width={`${props.size}px`}
+      height={`${props.size}px`}
+      borderRadius="4px"
+      alignItems="center"
+      justifyContent="center"
+      cursor="pointer"
+      display="flex"
+    >
+      {props.type === "King" && (
+        <Icon
+          as={FaChessKing}
+          boxSize={`${props.size / 2}px`}
+          color={ICON_COLOR[props.color]}
+        />
+      )}
+    </Box>
+  );
+};

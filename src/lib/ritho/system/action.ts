@@ -6,7 +6,7 @@ import { TILE_GRID_BORDER_BORDER_CELL_COUNT } from "@/constants";
 /**
  * 次のターンのプレイヤーを返す
  */
-const toggleTurn = (current: PieceColor) =>
+const nextTurn = (current: PieceColor) =>
   current === "Black" ? "White" : "Black";
 
 /**
@@ -17,7 +17,7 @@ const consumeActionCount = (
   count: number
 ): Pick<RawRithoState, "turn" | "restActionCount"> =>
   count === 1
-    ? { turn: toggleTurn(turn), restActionCount: INITIAL_ACTION_COUNT }
+    ? { turn: nextTurn(turn), restActionCount: INITIAL_ACTION_COUNT }
     : { turn, restActionCount: count - 1 };
 
 const placeTileAction = (
