@@ -1,1 +1,8 @@
-export const App = () => <div>app</div>;
+import { TopPage } from "@/pages/Top";
+import { AppProviders } from "@/providers";
+
+export const App = () => (
+  <AppProviders>
+    <TopPage />
+  </AppProviders>
+);
