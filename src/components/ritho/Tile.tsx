@@ -1,33 +1,44 @@
 import { TileType } from "@/types/ritho";
-import { chakra, Box, shouldForwardProp } from "@chakra-ui/react";
-import { motion, isValidMotionProp } from "framer-motion";
+import { chakra, Box } from "@chakra-ui/react";
+import { useDrag } from "react-dnd";
+import { ItemType } from "@/utils/reactDnd";
 
 const CIRCLE_SIZE_RATE = 0.25;
 
 type Props = {
   size: number;
   type: TileType;
-  drag?: boolean;
+  onDragStart?: () => void;
 };
 
 export const Tile = (props: Props) => {
   const circleSize = props.size * CIRCLE_SIZE_RATE;
+  const [_, dragRef] = useDrag(
+    () => ({
+      type: ItemType.TILE,
+      item: () => {
+        props.onDragStart?.();
+        return {};
+      },
+    }),
+    [props.onDragStart]
+  );
 
   return (
-    <Root
+    <Box
+      ref={dragRef}
       position="relative"
       width={`${props.size}px`}
       height={`${props.size}px`}
       bg="gray.500"
       borderRadius="4px"
       overflow="hidden"
-      drag={props.drag}
       cursor="pointer"
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />
       {props.type !== "Diagonal" && <VerticalAndHorizontal />}
       {props.type !== "VerticalAndHorizontal" && <Diagonal />}
-    </Root>
+    </Box>
   );
 };
 
@@ -100,9 +111,4 @@ const Diagonal = chakra(Line, {
       transform: "translate(-50%, -50%) rotate(-45deg)",
     },
   },
-});
-
-const Root = chakra(motion.div, {
-  shouldForwardProp: (props) =>
-    isValidMotionProp(props) || shouldForwardProp(props),
 });

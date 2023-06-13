@@ -1,11 +1,13 @@
-import { Grid, GridItem } from "@chakra-ui/react";
-import { TileCell } from "@/types/ritho";
+import { Grid } from "@chakra-ui/react";
+import { Coord, TileCell } from "@/types/ritho";
 import { Tile } from "@/components/ritho/Tile";
 import { hasTile } from "@/utils/ritho.ts";
+import { TileGridCell } from "@/components/ritho/TileGridCell";
 
 type Props = {
   size: number;
   cells: TileCell[][];
+  onDrop: (coord: Coord) => void;
 };
 
 export const TileGrid = (props: Props) => {
@@ -25,21 +27,13 @@ export const TileGrid = (props: Props) => {
     >
       {props.cells.map((row, y) =>
         row.map((cell, x) => (
-          <GridItem
+          <TileGridCell
             key={`${y}-${x}`}
-            width={`${cellSize}px`}
-            height={`${cellSize}px`}
-            bg="white"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            cursor="pointer"
-            _hover={{
-              bg: "gray.200",
-            }}
+            size={cellSize}
+            onDrop={() => props.onDrop(cell.coord)}
           >
             {hasTile(cell) && <Tile size={cellSize} type={cell.tile} />}
-          </GridItem>
+          </TileGridCell>
         ))
       )}
     </Grid>

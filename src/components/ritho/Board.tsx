@@ -1,14 +1,17 @@
-import { Grid, GridItem } from "@chakra-ui/react";
-import { PieceCell, PieceColor } from "@/types/ritho";
+import { Coord, PieceCell, PieceColor } from "@/types/ritho";
 import { Piece } from "@/components/ritho/Piece";
 import { BOARD_CELL_COUNT } from "@/constants/ritho";
 import { calcCellSize, calcPieceSize, hasPiece } from "@/utils/ritho";
 import { forwardRef } from "react";
+import { BoardCell } from "@/components/ritho/BoardCell";
+import { Grid } from "@chakra-ui/react";
 
 type Props = {
   size: number;
   cells: PieceCell[][];
   draggableColor?: PieceColor;
+  onDragStart: (from: Coord) => void;
+  onDrop: (to: Coord) => void;
 };
 
 export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
@@ -28,15 +31,10 @@ export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
     >
       {props.cells.map((row, y) =>
         row.map((cell, x) => (
-          <GridItem
+          <BoardCell
             key={`${y}-${x}`}
-            width={`${cellSize}px`}
-            height={`${cellSize}px`}
-            bg="white"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            cursor="pointer"
+            size={cellSize}
+            onDrop={() => props.onDrop(cell.coord)}
           >
             {hasPiece(cell) && (
               <Piece
@@ -44,9 +42,10 @@ export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 type={cell.piece.type}
                 color={cell.piece.color}
                 drag={props.draggableColor === cell.piece.color}
+                onDragStart={() => props.onDragStart(cell.coord)}
               />
             )}
-          </GridItem>
+          </BoardCell>
         ))
       )}
     </Grid>

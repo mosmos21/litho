@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Ritho, RithoState } from "@/lib/ritho/system/types";
 import { buildRitho } from "@/lib/ritho/system";
+import { Coord, PlaceableTile } from "@/types/ritho.ts";
 
-type Context = {
-  ritho: RithoState;
-};
-export const useRitho = (): Context => {
-  const [ritho] = useState<Ritho>(buildRitho());
+export const useRitho = () => {
+  const [ritho, setRitho] = useState<Ritho>(buildRitho());
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  const handleMovePiece = useCallback((from: Coord, to: Coord) => {
+    setRitho((ritho) => ritho.action({ type: "MovePiece", from, to }));
+  }, []);
+
+  const handlePlaceTile = useCallback((tile: PlaceableTile, coord: Coord) => {
+    setRitho((ritho) => ritho.action({ type: "PlaceTile", tile, coord }));
+  }, []);
 
   return {
-    ritho,
+    ritho: ritho satisfies RithoState,
+    boardRef,
+    onMovePiece: handleMovePiece,
+    onPlaceTile: handlePlaceTile,
   };
 };
