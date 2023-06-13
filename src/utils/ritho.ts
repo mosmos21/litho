@@ -29,3 +29,12 @@ export const hasTile = (cell: TileCell): cell is TilePlacement =>
  */
 export const hasPiece = (cell: PieceCell): cell is PiecePlacement =>
   "piece" in cell;
+
+/**
+ * 座標がボードの範囲内にあるか判定する
+ */
+export const isCoordInBoard = (coord: { x: number; y: number }): boolean =>
+  coord.x >= 0 &&
+  coord.x < BOARD_CELL_COUNT &&
+  coord.y >= 0 &&
+  coord.y < BOARD_CELL_COUNT;

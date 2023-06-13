@@ -25,6 +25,13 @@ const placeTileAction = (
   tile: PlaceableTile,
   coord: Coord
 ): RawRithoState => {
+  if (state.tileGrid.hasTile(coord)) {
+    return state;
+  }
+  if (!state.tileGrid.canPlaceTile(coord)) {
+    return state;
+  }
+
   let nextState = {
     ...state,
     tileGrid: state.tileGrid.set(coord, tile),
@@ -53,11 +60,24 @@ const movePieceAction = (
   state: RawRithoState,
   from: Coord,
   to: Coord
-): RawRithoState => ({
-  ...state,
-  ...consumeActionCount(state.turn, state.restActionCount),
-  pieceGrid: state.pieceGrid.move(from, to),
-});
+): RawRithoState => {
+  if (from.x === to.x && from.y === to.y) {
+    return state;
+  }
+  if (!state.pieceGrid.canMovePiece(state.tileGrid, from, to)) {
+    return state;
+  }
+  const piece = state.pieceGrid.get(from);
+  if (!piece || piece.color !== state.turn) {
+    return state;
+  }
+
+  return {
+    ...state,
+    ...consumeActionCount(state.turn, state.restActionCount),
+    pieceGrid: state.pieceGrid.move(from, to),
+  };
+};
 
 const doAction =
   (state: RawRithoState) =>

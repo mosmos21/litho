@@ -3,7 +3,8 @@ import {
   PiecePlacement,
   TilePlacement,
   PlaceableTile,
-} from "@/types/ritho.ts";
+  TileType,
+} from "@/types/ritho";
 
 export const FIRST_TURN_COLOR: PieceColor = "Black";
 
@@ -62,3 +63,16 @@ export const INITIAL_TILE_PLACEMENTS: TilePlacement[] = [
  * ゲームボードのセルの数
  */
 export const BOARD_CELL_COUNT = 7;
+
+/**
+ * 斜め方向に接続可能な石板タイル
+ */
+export const DIAGONAL_TILE: TileType[] = ["Omnidirectional", "Diagonal"];
+
+/**
+ * 縦横方向に接続可能な石板タイル
+ */
+export const VERTICAL_AND_HORIZONTAL_TILE: TileType[] = [
+  "Omnidirectional",
+  "VerticalAndHorizontal",
+];
