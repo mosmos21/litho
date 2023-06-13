@@ -1,11 +1,16 @@
 import { TileType, Coord, TileCell } from "@/types/ritho";
 import { range } from "@/utils/array";
-import { INITIAL_TILE_PLACEMENTS } from "@/constants/ritho.ts";
+import {
+  DIAGONAL_TILE,
+  INITIAL_TILE_PLACEMENTS,
+  VERTICAL_AND_HORIZONTAL_TILE,
+} from "@/constants/ritho.ts";
+import { Grid } from "@/lib/ritho/grid";
 
 /**
  * 石板タイルの配置を管理する
  */
-type RawTileGrid = Record<string, Record<string, TileType | undefined>>;
+type RawTileGrid = Grid<TileType>;
 
 /**
  * 石板タイルの配置を操作するための関数群
@@ -13,15 +18,19 @@ type RawTileGrid = Record<string, Record<string, TileType | undefined>>;
 export type TileGrid = {
   hasTile: (coord: Coord) => boolean;
   get: (coord: Coord) => TileType | undefined;
+  getMoveableDirections: (coord: Coord) => Coord[];
   set: (coord: Coord, tile: TileType) => TileGrid;
   toArray: (margin?: number) => TileCell[][];
+  canPlaceTile: (coord: Coord) => boolean;
 };
 
 const build = (grid: RawTileGrid): TileGrid => ({
   hasTile: hasTile(grid),
   get: get(grid),
+  getMoveableDirections: getMoveableDirections(grid),
   set: set(grid),
   toArray: toArray(grid),
+  canPlaceTile: canPlaceTile(grid),
 });
 
 /**
@@ -38,14 +47,37 @@ const hasTile = (grid: RawTileGrid) => (coord: Coord) =>
 /**
  * 座標にタイルを追加する
  */
-const set = (grid: RawTileGrid) => (coord: Coord, tile: TileType) =>
-  build({
+const set = (grid: RawTileGrid) => (coord: Coord, tile: TileType) => {
+  return build({
     ...grid,
     [coord.y]: {
       ...grid[coord.y],
       [coord.x]: get(grid)(coord) ?? tile,
     },
   });
+};
+
+/**
+ * 指定した座標にタイルを置くことができるかを返す
+ */
+export const canPlaceTile =
+  (grid: RawTileGrid) =>
+  (coord: Coord): boolean => {
+    const around = [
+      { x: -1, y: -1 },
+      { x: 0, y: -1 },
+      { x: 1, y: -1 },
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
+      { x: -1, y: 1 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+    ];
+
+    return around.some(({ x, y }) =>
+      hasTile(grid)({ x: coord.x + x, y: coord.y + y })
+    );
+  };
 
 /**
  * タイルが存在する範囲を返す
@@ -79,6 +111,48 @@ const toArray =
         })
     );
   };
+
+/**
+ * 指定された座標から移動可能な方向を返す
+ */
+export const getMoveableDirections = (grid: RawTileGrid) => (coord: Coord) => {
+  const tile = get(grid)(coord);
+  if (!tile) return [];
+
+  const ds = [
+    { x: -1, y: -1 },
+    { x: -1, y: 1 },
+    { x: 1, y: -1 },
+    { x: 1, y: 1 },
+  ];
+  const vhs = [
+    { x: -1, y: 0 },
+    { x: 0, y: -1 },
+    { x: 0, y: 1 },
+    { x: 1, y: 0 },
+  ];
+
+  const result = [];
+
+  if (DIAGONAL_TILE.includes(tile)) {
+    result.push(
+      ...ds.filter(({ x, y }) =>
+        DIAGONAL_TILE.includes(get(grid)({ x: coord.x + x, y: coord.y + y }))
+      )
+    );
+  }
+  if (VERTICAL_AND_HORIZONTAL_TILE) {
+    result.push(
+      ...vhs.filter(({ x, y }) =>
+        VERTICAL_AND_HORIZONTAL_TILE.includes(
+          get(grid)({ x: coord.x + x, y: coord.y + y })
+        )
+      )
+    );
+  }
+
+  return result;
+};
 
 export const buildTileGrid = (): TileGrid =>
   INITIAL_TILE_PLACEMENTS.reduce(
