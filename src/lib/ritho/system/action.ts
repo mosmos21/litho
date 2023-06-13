@@ -37,13 +37,13 @@ const placeTileAction = (
   // NOTE: タイルは2枚置けるので一枚目の時はアクションの途中であることを記録する
   // すでにタイルを置いているアクションの時はアクションを消費する
   if (state.currentAction) {
-    nextState.currentAction = "PlaceTile";
-  } else {
     nextState = {
       ...nextState,
       currentAction: undefined,
       ...consumeActionCount(state.turn, state.restActionCount),
     };
+  } else {
+    nextState.currentAction = "PlaceTile";
   }
 
   return nextState;
