@@ -4,7 +4,7 @@ import { GamePage } from "@/pages/game/Page.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/g/:gameId",
+    path: "/g/:roomId",
     element: <GamePage />,
   },
   {

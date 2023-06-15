@@ -3,26 +3,27 @@ import { BasicLayout } from "@/layouts/BasicLayout";
 import { useStartGame } from "@/pages/top/hooks/useStartGame";
 import { Div } from "@/components/motion";
 import { PlayerNameInput } from "@/components/PlayerNameInput";
-import { WaitingGameSelect } from "@/components/WaitingGameSelect";
+import { WaitingRoomSelect } from "@/components/WaitingRoomSelect.tsx";
 import { useMenuStep } from "@/pages/top/hooks/useMenuStep";
 import { useCallback } from "react";
 
 export const TopPage = () => {
   const { getMenuMotionProps, openMenu, closeMenu } = useMenuStep();
   const {
-    waitingGames,
+    waitingRooms,
     playerName,
     onChangeName,
     onClickStart,
-    onSelectGameId,
+    onSelectRoomId,
+    onClickJoin,
   } = useStartGame();
 
-  const handleSelectGame = useCallback(
-    (gameId: string) => {
-      onSelectGameId(gameId);
+  const handleSelectRoom = useCallback(
+    (roomId: string) => {
+      onSelectRoomId(roomId);
       openMenu("JoinGameNameInput");
     },
-    [onSelectGameId, openMenu]
+    [onSelectRoomId, openMenu]
   );
 
   return (
@@ -66,10 +67,10 @@ export const TopPage = () => {
                 </_Button>
               </Motion>
               <Motion {...getMenuMotionProps("JoinGameSelect")}>
-                <WaitingGameSelect
-                  waitingGames={waitingGames}
+                <WaitingRoomSelect
+                  waitingRooms={waitingRooms}
                   onClickBackButton={closeMenu}
-                  onSelectGame={handleSelectGame}
+                  onSelectRoom={handleSelectRoom}
                 />
               </Motion>
               <Motion {...getMenuMotionProps("JoinGameNameInput")}>
@@ -78,7 +79,7 @@ export const TopPage = () => {
                   name={playerName}
                   onChangeName={onChangeName}
                   onClickBackButton={() => openMenu("JoinGameSelect")}
-                  onClickSubmitButton={onClickStart}
+                  onClickSubmitButton={onClickJoin}
                 />
               </Motion>
             </InnerBox>

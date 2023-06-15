@@ -1,12 +1,12 @@
 import { ChangeEvent, useCallback, useState } from "react";
-import { useGamePreparation } from "@/pages/top/hooks/useGamePreparation";
+import { useRoomPreparation } from "@/pages/top/hooks/useRoomPreparation.ts";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import { useNavigate } from "react-router-dom";
 
 export const useStartGame = () => {
   const [playerName, setPlayerName] = useState("");
-  const [gameId, setGameId] = useState<string | undefined>();
-  const { waitingGames, createGame } = useGamePreparation();
+  const [roomId, setRoomId] = useState<string | undefined>();
+  const { waitingRooms, createRoom } = useRoomPreparation();
   const { setPlayer } = usePlayerContext();
   const navigate = useNavigate();
 
@@ -15,21 +15,21 @@ export const useStartGame = () => {
   }, []);
 
   const handleClickStart = useCallback(() => {
-    createGame(playerName).then((gameId) => {
+    createRoom(playerName).then((roomId) => {
       setPlayer({ name: playerName });
-      navigate(`/g/${gameId}`);
+      navigate(`/g/${roomId}`);
     });
-  }, [createGame, playerName, setPlayer, navigate]);
+  }, [createRoom, playerName, setPlayer, navigate]);
 
   const handleClickJoin = useCallback(() => {
     setPlayer({ name: playerName });
-    navigate(`/g/${gameId}`);
-  }, [gameId, navigate, playerName, setPlayer]);
+    navigate(`/g/${roomId}`);
+  }, [roomId, navigate, playerName, setPlayer]);
 
   return {
     playerName,
-    waitingGames,
-    onSelectGameId: setGameId,
+    waitingRooms,
+    onSelectRoomId: setRoomId,
     onChangeName: handleChangeName,
     onClickStart: handleClickStart,
     onClickJoin: handleClickJoin,

@@ -26,3 +26,8 @@ export const DEFAULT_TILE_GRID_SIZE = 400;
  * 石板タイル配置エリアの余白セル数
  */
 export const TILE_GRID_BORDER_BORDER_CELL_COUNT = 1;
+
+/**
+ * roomIdの長さ
+ */
+export const ROOM_ID_LENGTH = 32;

@@ -1,21 +1,23 @@
-import { useFirebaseContext } from "@/providers/FirebaseProvider";
 import { useCallback, useEffect } from "react";
 import { Game, OngoingGame, WaitingGame } from "@/lib/firebase/schema";
 import { isWaitingGame } from "@/utils/game";
 import { usePlayerContext } from "@/providers/PlayerProvider";
-import { useApplicationModalContext } from "@/providers/ApplicationModalProvider";
+import { useGamesGameIdMutation, useWaitingRoomsRoomIdMutation } from "@/api";
 
-export const useGamePreparation = (gameId: string, game: Game) => {
-  const { db } = useFirebaseContext();
+export const useGamePreparation = (game: Game) => {
   const { player } = usePlayerContext();
-  const { openModal } = useApplicationModalContext();
+  const { setGame, setGamePlayer } = useGamesGameIdMutation();
+  const { removeWaitingRoom } = useWaitingRoomsRoomIdMutation();
+
   const configureGame = useCallback(
     (waitingGame: WaitingGame) => {
+      const { roomId } = waitingGame;
       const blackPlayerIdx = Math.floor(Math.random() * 2);
       const whitePlayerIdx = blackPlayerIdx === 0 ? 1 : 0;
       const playerNames = Object.keys(waitingGame.players);
 
       const ongoingGame: OngoingGame = {
+        roomId: roomId,
         status: "ongoing",
         turn: {
           Black: playerNames[blackPlayerIdx],
@@ -24,22 +26,14 @@ export const useGamePreparation = (gameId: string, game: Game) => {
         startedAt: new Date().toISOString(),
         gameRecords: {},
       };
-      db.set(`/games/${gameId}`, ongoingGame);
-      db.remove(`/waitingGames/${gameId}`);
-    },
-    [db, gameId]
-  );
 
-  const joinGame = useCallback(
-    (playerName: string) => {
-      db.set(`/games/${gameId}/players/${playerName}`, playerName);
+      return Promise.all([setGame(ongoingGame), removeWaitingRoom(roomId)]);
     },
-    [db, gameId]
+    [setGame, removeWaitingRoom]
   );
 
   useEffect(() => {
     if (!isWaitingGame(game)) return;
-    if (!player) return;
 
     if (game.author === player.name) {
       const players = Object.keys(game.players);
@@ -47,7 +41,7 @@ export const useGamePreparation = (gameId: string, game: Game) => {
         configureGame(game);
       }
     } else {
-      joinGame(player.name);
+      setGamePlayer(game, player.name);
     }
-  }, [game, player, openModal, configureGame, joinGame]);
+  }, [game, player, configureGame, setGamePlayer]);
 };

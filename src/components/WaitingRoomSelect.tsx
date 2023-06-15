@@ -1,4 +1,4 @@
-import { WaitingGameList } from "@/lib/firebase/schema";
+import { WaitingRooms } from "@/lib/firebase/schema";
 import {
   chakra,
   Flex,
@@ -11,14 +11,14 @@ import {
 import { UpButton } from "@/components/UpButton.tsx";
 
 type Props = {
-  waitingGames: WaitingGameList;
+  waitingRooms: WaitingRooms;
   onClickBackButton: () => void;
-  onSelectGame: (gameId: string) => void;
+  onSelectRoom: (roomId: string) => void;
 };
 
-export const WaitingGameSelect = (props: Props) => (
+export const WaitingRoomSelect = (props: Props) => (
   <Flex flexDirection="column" alignItems="flex-start">
-    {Object.keys(props.waitingGames).length === 0 ? (
+    {Object.keys(props.waitingRooms).length === 0 ? (
       <Box margin="12px 0" width="100%">
         <Text textAlign="center" color="gray.800">
           no waiting game...
@@ -26,15 +26,15 @@ export const WaitingGameSelect = (props: Props) => (
       </Box>
     ) : (
       <List width="100%">
-        {Object.entries(props.waitingGames).map(([gameId, game]) => (
+        {Object.values(props.waitingRooms).map((game) => (
           <ListItem
-            key={gameId}
+            key={game.roomId}
             cursor="pointer"
             textAlign="center"
             padding="4px"
             _hover={{ backgroundColor: "gray.100" }}
           >
-            <_Button onClick={() => props.onSelectGame(gameId)}>
+            <_Button onClick={() => props.onSelectRoom(game.roomId)}>
               vs {game.playerName}
             </_Button>
           </ListItem>
