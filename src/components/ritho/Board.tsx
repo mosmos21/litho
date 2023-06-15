@@ -41,7 +41,7 @@ export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 size={pieceSize}
                 type={cell.piece.type}
                 color={cell.piece.color}
-                drag={props.draggableColor === cell.piece.color}
+                draggable={props.draggableColor === cell.piece.color}
                 onDragStart={() => props.onDragStart(cell.coord)}
               />
             )}

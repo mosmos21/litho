@@ -1,8 +1,8 @@
-import { TopPage } from "@/pages/Top";
 import { AppProviders } from "@/providers";
+import { AppRoutes } from "@/routes";
 
 export const App = () => (
   <AppProviders>
-    <TopPage />
+    <AppRoutes />
   </AppProviders>
 );
