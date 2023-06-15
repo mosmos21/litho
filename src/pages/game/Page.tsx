@@ -1,14 +1,16 @@
-import { useRitho } from "@/hooks/useRitho";
-import { Board } from "@/components/ritho/Board";
-import { TileGrid } from "@/components/ritho/TileGrid";
+import { useRitho } from "@/hooks/useRitho.ts";
+import { Board } from "@/components/ritho/Board.tsx";
+import { TileGrid } from "@/components/ritho/TileGrid.tsx";
 import { DEFAULT_BOARD_SIZE, DEFAULT_TILE_GRID_SIZE } from "@/constants";
-import { BasicLayout } from "@/layouts/BasicLayout";
+import { BasicLayout } from "@/layouts/BasicLayout.tsx";
 import { Flex, List, ListItem } from "@chakra-ui/react";
 import { TileStorage } from "@/components/TileStorage";
-import { usePieceDnd } from "@/hooks/usePieceDnd.ts";
-import { useTileDnd } from "@/hooks/useTileDnd.ts";
+import { usePieceDnd } from "@/hooks/usePieceDnd";
+import { useTileDnd } from "@/hooks/useTileDnd";
+import { useGame } from "@/pages/game/hooks/useGame.ts";
 
-export const TopPage = () => {
+export const GamePage = () => {
+  useGame();
   const { ritho, boardRef, onMovePiece, onPlaceTile } = useRitho();
   const pieceDnd = usePieceDnd({ onMovePiece });
   const tileDnd = useTileDnd({ onPlaceTile });
