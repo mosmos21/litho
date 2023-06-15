@@ -24,7 +24,6 @@ export const useGamePreparation = (game: Game) => {
           White: playerNames[whitePlayerIdx],
         },
         startedAt: new Date().toISOString(),
-        gameRecords: {},
       };
 
       return Promise.all([setGame(ongoingGame), removeWaitingRoom(roomId)]);
