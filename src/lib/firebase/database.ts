@@ -27,13 +27,19 @@ const _onValue =
   (key: string, callback: (snapshot: DataSnapshot) => unknown) =>
     onValue(ref(db, key), callback);
 
-const getProductionDB = (app: FirebaseApp) => getDatabase(app);
+const getProductionDB = (app: FirebaseApp) =>
+  getDatabase(
+    app,
+    " https://ritho-ae2e3-default-rtdb.asia-southeast1.firebasedatabase.app"
+  );
 
 const getLocalDB = () => {
   const db = getDatabase();
   connectDatabaseEmulator(db, "localhost", 3003);
+
   return db;
 };
+
 export const getDB = (app: FirebaseApp) => {
   const db =
     import.meta.env.MODE === "production" ? getProductionDB(app) : getLocalDB();
