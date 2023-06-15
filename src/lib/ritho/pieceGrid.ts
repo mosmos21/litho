@@ -13,7 +13,7 @@ type RawPieceGrid = Grid<Piece>;
  * 駒の配置を操作するための関数群
  */
 export type PieceGrid = {
-  hasTile: (coord: Coord) => boolean;
+  hasPiece: (coord: Coord) => boolean;
   get: (coord: Coord) => Piece | undefined;
   set: (coord: Coord, piece?: Piece) => PieceGrid;
   canMovePiece: (tileGrid: TileGrid, from: Coord, to: Coord) => boolean;
@@ -22,7 +22,7 @@ export type PieceGrid = {
 };
 
 const build = (grid: RawPieceGrid): PieceGrid => ({
-  hasTile: hasTile(grid),
+  hasPiece: hasPiece(grid),
   get: get(grid),
   set: set(grid),
   canMovePiece: canMovePiece(grid),
@@ -50,7 +50,7 @@ const set = (grid: RawPieceGrid) => (coord: Coord, piece?: Piece) =>
 /**
  * 座標に駒が存在するかどうかを返す
  */
-const hasTile = (grid: RawPieceGrid) => (coord: Coord) =>
+const hasPiece = (grid: RawPieceGrid) => (coord: Coord) =>
   Boolean(get(grid)(coord));
 
 /**
@@ -75,11 +75,16 @@ export const canMovePiece =
       const pieceCoord = { x: from.x + coord.x, y: from.y + coord.y };
       if (pieceCoord.x === to.x && pieceCoord.y === to.y) return true;
 
-      // NOTE: 駒を飛び越えてはいけないので、駒がある場合はスキップする
-      if (hasTile(grid)(coord)) continue;
-
       visitedTileCoords[coord.y] ??= {};
       visitedTileCoords[coord.y][coord.x] = true;
+
+      // NOTE: 駒を飛び越えてはいけないので、駒がある場合はスキップする
+      if (
+        !(pieceCoord.x === from.x && pieceCoord.y === from.y) &&
+        hasPiece(grid)(pieceCoord)
+      ) {
+        continue;
+      }
 
       tileGrid.getMoveableDirections(coord).forEach((direction) => {
         const nextTileCoord = {
@@ -87,8 +92,8 @@ export const canMovePiece =
           y: coord.y + direction.y,
         };
         const nextCoordPiece = get(grid)({
-          x: from.x + direction.x,
-          y: from.y + direction.y,
+          x: from.x + nextTileCoord.x,
+          y: from.y + nextTileCoord.y,
         });
 
         // NOTE: まだ行ったことのない方向で自分の駒が置いてなければ遷移可能
