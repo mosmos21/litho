@@ -26,7 +26,6 @@ export const TileGridCell = (props: Props) => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      cursor="pointer"
       _hover={{
         bg: "gray.200",
       }}

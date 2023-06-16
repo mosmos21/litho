@@ -18,7 +18,7 @@ type Props = {
   size: number;
   type: PieceType;
   color: PieceColor;
-  draggable?: boolean;
+  canMove?: boolean;
   onDragStart: () => void;
 };
 
@@ -30,8 +30,9 @@ export const Piece = (props: Props) => {
         props.onDragStart();
         return {};
       },
+      canDrag: props.canMove,
     }),
-    [props.draggable, props.onDragStart]
+    [props.canMove, props.onDragStart]
   );
 
   return (
@@ -43,7 +44,7 @@ export const Piece = (props: Props) => {
       borderRadius="4px"
       alignItems="center"
       justifyContent="center"
-      cursor={props.draggable ? "grab" : "default"}
+      cursor={props.canMove ? "pointer" : "default"}
       display="flex"
     >
       {props.type === "King" && (
