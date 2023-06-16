@@ -46,7 +46,7 @@ export const useGameProgression = (game: Game) => {
 
     if (!currentPlayerColor) {
       setCurrentPlayerColor(
-        game.turn["Black"] === player.name ? "Black" : "White"
+        game.turn["Black"].id === player.id ? "Black" : "White"
       );
     }
   }, [game, player, currentPlayerColor]);

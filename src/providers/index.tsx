@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { FirebaseProvider } from "@/providers/FirebaseProvider";
 import { PlayerProvider } from "@/providers/PlayerProvider";
 import { ApplicationModalProvider } from "@/providers/ApplicationModalProvider";
+import { AuthProvider } from "src/providers/AuthProvider";
 
 type Props = {
   children: ReactNode;
@@ -14,9 +15,13 @@ export const AppProviders = (props: Props) => (
   <DndProvider backend={HTML5Backend}>
     <ChakraProvider>
       <FirebaseProvider>
-        <PlayerProvider>
-          <ApplicationModalProvider>{props.children}</ApplicationModalProvider>
-        </PlayerProvider>
+        <AuthProvider>
+          <PlayerProvider>
+            <ApplicationModalProvider>
+              {props.children}
+            </ApplicationModalProvider>
+          </PlayerProvider>
+        </AuthProvider>
       </FirebaseProvider>
     </ChakraProvider>
   </DndProvider>

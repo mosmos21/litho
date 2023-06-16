@@ -1,8 +1,9 @@
 import { createContext } from "react";
-import { DB } from "@/lib/firebase/database";
+import { DatabaseInstance, AuthInstance } from "@/lib/firebase";
 
 export type Context = {
-  db: DB;
+  db: DatabaseInstance;
+  auth: AuthInstance;
 };
 
 export const FirebaseContext = createContext<Context>({} as Context);

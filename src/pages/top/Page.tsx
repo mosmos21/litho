@@ -1,6 +1,6 @@
 import { chakra, Text, Flex, Button, Box, Divider } from "@chakra-ui/react";
 import { BasicLayout } from "@/layouts/BasicLayout";
-import { useStartGame } from "@/pages/top/hooks/useStartGame";
+import { useStartGame } from "@/pages/top/hooks/useStartGame.ts";
 import { Div } from "@/components/motion";
 import { PlayerNameInput } from "@/components/PlayerNameInput";
 import { WaitingRoomSelect } from "@/components/WaitingRoomSelect.tsx";
@@ -12,6 +12,7 @@ export const TopPage = () => {
   const {
     waitingRooms,
     playerName,
+    isInvalidPlayerName,
     onChangeName,
     onClickStart,
     onSelectRoomId,
@@ -50,6 +51,7 @@ export const TopPage = () => {
                 <PlayerNameInput
                   buttonLabel="Start !"
                   name={playerName}
+                  isInvalid={isInvalidPlayerName}
                   onChangeName={onChangeName}
                   onClickBackButton={closeMenu}
                   onClickSubmitButton={onClickStart}
@@ -77,6 +79,7 @@ export const TopPage = () => {
                 <PlayerNameInput
                   buttonLabel="Join !"
                   name={playerName}
+                  isInvalid={isInvalidPlayerName}
                   onChangeName={onChangeName}
                   onClickBackButton={() => openMenu("JoinGameSelect")}
                   onClickSubmitButton={onClickJoin}

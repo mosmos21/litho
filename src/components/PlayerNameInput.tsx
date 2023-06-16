@@ -4,6 +4,7 @@ import { UpButton } from "@/components/UpButton";
 
 type Props = {
   name?: string;
+  isInvalid?: boolean;
   buttonLabel: string;
   onChangeName?: (e: ChangeEvent<HTMLInputElement>) => void;
   onClickBackButton?: () => void;
@@ -13,6 +14,7 @@ type Props = {
 export const PlayerNameInput = (props: Props) => (
   <Flex flexDirection="column" gap="8px">
     <Input
+      isInvalid={props.isInvalid}
       type="text"
       placeholder="name: /^[0-9a-zA-Z]{1,32}$/"
       value={props.name}
@@ -23,7 +25,8 @@ export const PlayerNameInput = (props: Props) => (
         <UpButton onClick={props.onClickBackButton} />
       )}
       <Button
-        onClick={props.onClickSubmitButton}
+        disabled={props.isInvalid}
+        onClick={props.isInvalid ? undefined : props.onClickSubmitButton}
         backgroundColor="blackAlpha.800"
         width="120px"
         _hover={{ backgroundColor: "blackAlpha.800", color: "white" }}

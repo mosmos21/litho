@@ -1,4 +1,4 @@
-import { Game } from "@/lib/firebase/schema";
+import { Game, Player } from "@/lib/firebase/schema";
 import { useCallback } from "react";
 import { useFirebaseContext } from "@/providers/FirebaseProvider";
 
@@ -11,8 +11,8 @@ export const useGamesGameIdMutation = () => {
   );
 
   const setGamePlayer = useCallback(
-    (game: Game, playerName: string) =>
-      db.set(`/games/${game.roomId}/players/${playerName}`, playerName),
+    (game: Game, player: Player) =>
+      db.set(`/games/${game.roomId}/players/${player.id}`, player),
     [db]
   );
 

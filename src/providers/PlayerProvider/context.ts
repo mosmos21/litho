@@ -1,19 +1,13 @@
-import { createContext, Dispatch, SetStateAction } from "react";
-import { randomString } from "@/utils/string.ts";
-
-export type Player = {
-  name: string;
-};
+import { Player } from "@/lib/firebase/schema";
+import { createContext } from "react";
 
 type Context = {
   player: Player;
-  setPlayer: Dispatch<SetStateAction<Player>>;
 };
 
 export const PlayerContext = createContext<Context>({
   player: {
-    name: randomString(6),
+    id: "",
+    name: "",
   },
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setPlayer: () => {},
 });
