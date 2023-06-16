@@ -10,3 +10,5 @@ export const range = (from: number, to: number) =>
  * @param n
  */
 export const numbers = (n: number) => range(0, n - 1);
+
+export const reversed = <T>(array: T[]) => [...array].reverse();

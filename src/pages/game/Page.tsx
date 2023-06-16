@@ -40,6 +40,7 @@ export const GamePage = () => {
       </Flex>
       <Flex gap="32px" marginTop="12px">
         <Board
+          reverse={currentPlayerColor === "White"}
           ref={boardRef}
           size={DEFAULT_BOARD_SIZE}
           cells={ritho.pieceCell}
@@ -48,6 +49,7 @@ export const GamePage = () => {
         />
         <Flex flexDirection="column" gap="24px">
           <TileGrid
+            reverse={currentPlayerColor === "White"}
             size={DEFAULT_TILE_GRID_SIZE}
             cells={ritho.tileCell}
             onDrop={tileDnd.onDrop}

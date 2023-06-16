@@ -2,9 +2,10 @@ import { Coord, PieceCell, PieceColor } from "@/types/ritho";
 import { Piece } from "@/components/ritho/Piece";
 import { BOARD_CELL_COUNT } from "@/constants/ritho";
 import { calcCellSize, calcPieceSize, hasPiece } from "@/utils/ritho";
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 import { BoardCell } from "@/components/ritho/BoardCell";
 import { Grid } from "@chakra-ui/react";
+import { reversed } from "@/utils/array";
 
 type Props = {
   size: number;
@@ -12,9 +13,14 @@ type Props = {
   moveableColor?: PieceColor;
   onDragStart: (from: Coord) => void;
   onDrop: (to: Coord) => void;
+  reverse?: boolean;
 };
 
 export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const cells = useMemo(
+    () => (props.reverse ? reversed(props.cells).map(reversed) : props.cells),
+    [props.cells, props.reverse]
+  );
   const cellSize = calcCellSize(props.size);
   const pieceSize = calcPieceSize(cellSize);
 
@@ -29,7 +35,7 @@ export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
       width={`${props.size}px`}
       height={`${props.size}px`}
     >
-      {props.cells.map((row, y) =>
+      {cells.map((row, y) =>
         row.map((cell, x) => (
           <BoardCell
             key={`${y}-${x}`}

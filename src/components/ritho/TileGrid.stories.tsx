@@ -16,3 +16,9 @@ export default {
 type Story = StoryObj<typeof TileGrid>;
 
 export const Default: Story = {};
+
+export const Reverse: Story = {
+  args: {
+    reverse: true,
+  },
+};
