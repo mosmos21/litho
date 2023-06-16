@@ -1,16 +1,21 @@
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useState, useMemo } from "react";
 import { useRoomPreparation } from "@/pages/top/hooks/useRoomPreparation";
 import { usePlayersPlayerIdMutation } from "@/api";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "@/providers/AuthProvider";
-import { Player } from "@/lib/firebase/schema.ts";
+import { Player } from "@/lib/firebase/schema";
+import { usePlayerContext } from "@/providers/PlayerProvider";
+import { playerNameSchema } from "@/lib/firebase/schema";
 
 export const useStartGame = () => {
-  const [playerName, setPlayerName] = useState("");
+  const { player: currentPlayer } = usePlayerContext();
+  const [playerName, setPlayerName] = useState(currentPlayer.name);
+  const isInvalidPlayerName = useMemo(() => {
+    console.log(playerName, playerNameSchema.safeParse(playerName).success);
+    return !playerNameSchema.safeParse(playerName).success;
+  }, [playerName]);
   const [roomId, setRoomId] = useState<string | undefined>();
   const { waitingRooms, createRoom } = useRoomPreparation();
   const { setPlayer } = usePlayersPlayerIdMutation();
-  const { currentUser } = useAuthContext();
 
   const navigate = useNavigate();
 
@@ -20,7 +25,7 @@ export const useStartGame = () => {
 
   const handleClickStart = useCallback(() => {
     const player: Player = {
-      id: currentUser.uid,
+      id: currentPlayer.id,
       name: playerName,
     };
     setPlayer(player)
@@ -28,18 +33,19 @@ export const useStartGame = () => {
       .then((roomId) => {
         navigate(`/g/${roomId}`);
       });
-  }, [createRoom, playerName, setPlayer, navigate, currentUser]);
+  }, [createRoom, playerName, setPlayer, navigate, currentPlayer]);
 
   const handleClickJoin = useCallback(() => {
     const player = {
-      id: currentUser.uid,
+      id: currentPlayer.id,
       name: playerName,
     };
     setPlayer(player).then(() => navigate(`/g/${roomId}`));
-  }, [roomId, navigate, playerName, setPlayer, currentUser]);
+  }, [roomId, navigate, playerName, setPlayer, currentPlayer]);
 
   return {
     playerName,
+    isInvalidPlayerName,
     waitingRooms,
     onSelectRoomId: setRoomId,
     onChangeName: handleChangeName,

@@ -8,7 +8,7 @@ const playerIdSchema = z.string();
 
 export type PlayerId = z.infer<typeof playerIdSchema>;
 
-const playerNameSchema = z.string().regex(/^[a-zA-Z0-9]{1,32}$/);
+export const playerNameSchema = z.string().regex(/^[a-zA-Z0-9]{1,32}$/);
 
 export const playerSchema = z.object({
   id: playerIdSchema,

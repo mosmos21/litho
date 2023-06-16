@@ -9,6 +9,7 @@ export const useWaitingRoomsQuery = () => {
 
   const watchWaitingGamesCallback = useCallback((snapshot: DataSnapshot) => {
     const waitingRooms = waitingRoomsSchema.safeParse(snapshot.val());
+
     if (waitingRooms.success) {
       setWaitingRooms(Object.values(waitingRooms.data));
     }
