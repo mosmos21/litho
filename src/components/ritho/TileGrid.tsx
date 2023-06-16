@@ -3,14 +3,21 @@ import { Coord, TileCell } from "@/types/ritho";
 import { Tile } from "@/components/ritho/Tile";
 import { hasTile } from "@/utils/ritho.ts";
 import { TileGridCell } from "@/components/ritho/TileGridCell";
+import { useMemo } from "react";
+import { reversed } from "@/utils/array";
 
 type Props = {
+  reverse?: boolean;
   size: number;
   cells: TileCell[][];
   onDrop: (coord: Coord) => void;
 };
 
 export const TileGrid = (props: Props) => {
+  const cells = useMemo(
+    () => (props.reverse ? reversed(props.cells).map(reversed) : props.cells),
+    [props.cells, props.reverse]
+  );
   const tileGridSize = props.size + 8;
   const cellSize =
     props.size / Math.max(props.cells.length, props.cells[0].length);
@@ -25,7 +32,7 @@ export const TileGrid = (props: Props) => {
       width={`${tileGridSize}px`}
       height={`${tileGridSize}px`}
     >
-      {props.cells.map((row, y) =>
+      {cells.map((row, y) =>
         row.map((cell, x) => (
           <TileGridCell
             key={`${y}-${x}`}

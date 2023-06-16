@@ -1,12 +1,14 @@
-import { Board } from "@/components/ritho/Board.tsx";
-import { TileGrid } from "@/components/ritho/TileGrid.tsx";
-import { DEFAULT_BOARD_SIZE, DEFAULT_TILE_GRID_SIZE } from "@/constants";
-import { BasicLayout } from "@/layouts/BasicLayout.tsx";
-import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { Board } from "@/components/ritho/Board";
+import { TileGrid } from "@/components/ritho/TileGrid";
+import { BOARD_MAX_SIZE, TILE_GRID_MAX_SIZE } from "@/constants";
+import { BasicLayout } from "@/layouts/BasicLayout";
+import { chakra, Flex } from "@chakra-ui/react";
 import { TileStorage } from "@/components/TileStorage";
 import { usePieceDnd } from "@/hooks/usePieceDnd";
 import { useTileDnd } from "@/hooks/useTileDnd";
 import { useGame } from "@/pages/game/hooks/useGame";
+import { GameInformation } from "@/components/GameInformation";
+import { useElementSize } from "@/pages/game/hooks/useElementSize.ts";
 
 export const GamePage = () => {
   const {
@@ -15,40 +17,35 @@ export const GamePage = () => {
     moveablePieceColor,
     moveableTile,
     ritho,
-    boardRef,
     onMovePiece,
     onPlaceTile,
   } = useGame();
   const pieceDnd = usePieceDnd({ onMovePiece });
   const tileDnd = useTileDnd({ onPlaceTile });
+  const [boardSize, firstColumnRef] = useElementSize(BOARD_MAX_SIZE);
+  const [tileGridSize, secondColumnRef] = useElementSize(TILE_GRID_MAX_SIZE);
 
   return (
     <BasicLayout>
-      {game.status === "waiting" && (
-        <Flex gap="8px">
-          <Text color="blackAlpha.700">Waiting...</Text>
-          <Spinner />
-        </Flex>
-      )}
-      <Flex gap="12px">
-        {currentPlayerColor && (
-          <Text color="blackAlpha.700">{currentPlayerColor}</Text>
-        )}
-        {ritho.turn === currentPlayerColor && (
-          <Text>Your turn: action {ritho.restActionCount}</Text>
-        )}
-      </Flex>
-      <Flex gap="32px" marginTop="12px">
-        <Board
-          ref={boardRef}
-          size={DEFAULT_BOARD_SIZE}
-          cells={ritho.pieceCell}
-          moveableColor={moveablePieceColor}
-          {...pieceDnd}
-        />
-        <Flex flexDirection="column" gap="24px">
+      <Flex gap="12px" flexDirection={{ sm: "column", lg: "row" }}>
+        <Column ref={firstColumnRef}>
+          <GameInformation
+            game={game}
+            currentTurnColor={ritho.turn}
+            style={{ margin: "12px 0" }}
+          />
+          <Board
+            reverse={currentPlayerColor === "White"}
+            size={boardSize}
+            cells={ritho.pieceCell}
+            moveableColor={moveablePieceColor}
+            {...pieceDnd}
+          />
+        </Column>
+        <Column ref={secondColumnRef} justifyContent="center">
           <TileGrid
-            size={DEFAULT_TILE_GRID_SIZE}
+            reverse={currentPlayerColor === "White"}
+            size={tileGridSize}
             cells={ritho.tileCell}
             onDrop={tileDnd.onDrop}
           />
@@ -57,8 +54,17 @@ export const GamePage = () => {
             tileCount={ritho.restTileCount}
             onDragTile={tileDnd.onDragStart}
           />
-        </Flex>
+        </Column>
       </Flex>
     </BasicLayout>
   );
 };
+
+const Column = chakra(Flex, {
+  baseStyle: {
+    flexDirection: "column",
+    gap: "12px",
+    alignItems: "center",
+    width: { sm: "100%", lg: "calc(50% - 6px)" },
+  },
+});

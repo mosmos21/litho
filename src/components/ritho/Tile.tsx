@@ -36,6 +36,7 @@ export const Tile = (props: Props) => {
       borderRadius="4px"
       overflow="hidden"
       cursor={props.moveable ? "pointer" : "default"}
+      boxShadow="md"
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />
       {props.type !== "Diagonal" && <VerticalAndHorizontal />}
