@@ -18,6 +18,7 @@ export const useGamePreparation = (game: Game) => {
 
       const ongoingGame: OngoingGame = {
         roomId: roomId,
+        author: waitingGame.author,
         status: "ongoing",
         turn: {
           Black: players[blackPlayerIdx],

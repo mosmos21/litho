@@ -9,10 +9,10 @@ import { playerNameSchema } from "@/lib/firebase/schema";
 export const useStartGame = () => {
   const { player: currentPlayer } = usePlayerContext();
   const [playerName, setPlayerName] = useState(currentPlayer.name);
-  const isInvalidPlayerName = useMemo(() => {
-    console.log(playerName, playerNameSchema.safeParse(playerName).success);
-    return !playerNameSchema.safeParse(playerName).success;
-  }, [playerName]);
+  const isInvalidPlayerName = useMemo(
+    () => !playerNameSchema.safeParse(playerName).success,
+    [playerName]
+  );
   const [roomId, setRoomId] = useState<string | undefined>();
   const { waitingRooms, createRoom } = useRoomPreparation();
   const { setPlayer } = usePlayersPlayerIdMutation();

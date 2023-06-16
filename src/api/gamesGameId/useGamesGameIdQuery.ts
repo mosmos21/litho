@@ -12,6 +12,7 @@ export const useGamesGameIdQuery = (roomId: string) => {
 
   const watchGameCallback = useCallback((snapshot: DataSnapshot) => {
     const game = gameSchema.safeParse(snapshot.val());
+    gameSchema.parse(snapshot.val());
     if (game.success) {
       setGameState(game.data);
     }

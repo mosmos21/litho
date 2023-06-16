@@ -61,22 +61,33 @@ const movePieceAction = (
   from: Coord,
   to: Coord
 ): RawRithoState => {
+  // NOTE: タイルを置いている途中の場合は駒を動かせない
+  if (state.currentAction) {
+    return state;
+  }
   if (from.x === to.x && from.y === to.y) {
     return state;
   }
   if (!state.pieceGrid.canMovePiece(state.tileGrid, from, to)) {
     return state;
   }
-  const piece = state.pieceGrid.get(from);
-  if (!piece || piece.color !== state.turn) {
+  const fromPiece = state.pieceGrid.get(from);
+  const toPiece = state.pieceGrid.get(to);
+  if (!toPiece || !fromPiece || fromPiece.color !== state.turn) {
     return state;
   }
 
-  return {
+  const nextState = {
     ...state,
     ...consumeActionCount(state.turn, state.restActionCount),
     pieceGrid: state.pieceGrid.move(from, to),
   };
+
+  if (toPiece.type === "King") {
+    nextState.winner = state.turn;
+  }
+
+  return nextState;
 };
 
 const doAction =
@@ -97,5 +108,6 @@ export const build = (state: RawRithoState): Ritho => ({
   pieceCell: state.pieceGrid.toArray(),
   tileCell: state.tileGrid.toArray(TILE_GRID_BORDER_BORDER_CELL_COUNT),
   restTileCount: state.restTileCount,
+  winner: state.winner,
   action: doAction(state),
 });
