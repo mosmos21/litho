@@ -1,19 +1,21 @@
 import { useContext } from "react";
 import { FirebaseContext } from "@/providers/FirebaseProvider/context";
 import { useMemo } from "react";
-import { getAppInstance } from "@/lib/firebase";
-import { getDB } from "@/lib/firebase/database";
-import { getAuthInstance } from "@/lib/firebase/auth";
+import {
+  getAppInstance,
+  getDatabaseInstance,
+  getAuthInstance,
+} from "@/lib/firebase";
 
 export const useFirebase = () => {
   const app = useMemo(() => getAppInstance(), []);
-  const db = useMemo(() => getDB(app), [app]);
+  const db = useMemo(() => getDatabaseInstance(app), [app]);
   const auth = useMemo(() => getAuthInstance(app), [app]);
 
   return {
     db,
-    auth
-  }
-}
+    auth,
+  };
+};
 
 export const useFirebaseContext = () => useContext(FirebaseContext);

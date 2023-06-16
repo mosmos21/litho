@@ -40,7 +40,7 @@ const getLocalDB = () => {
   return db;
 };
 
-export const getDB = (app: FirebaseApp) => {
+export const getDatabaseInstance = (app: FirebaseApp) => {
   const db =
     import.meta.env.MODE === "production" ? getProductionDB(app) : getLocalDB();
 
@@ -53,4 +53,4 @@ export const getDB = (app: FirebaseApp) => {
   };
 };
 
-export type DB = ReturnType<typeof getDB>;
+export type DatabaseInstance = ReturnType<typeof getDatabaseInstance>;
