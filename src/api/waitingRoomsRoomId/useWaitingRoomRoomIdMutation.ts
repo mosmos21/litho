@@ -1,14 +1,15 @@
 import { useFirebaseContext } from "@/providers/FirebaseProvider";
 import { useCallback } from "react";
+import { Player } from "@/lib/firebase/schema";
 
 export const useWaitingRoomsRoomIdMutation = () => {
   const { db } = useFirebaseContext();
 
   const setWaitingRoom = useCallback(
-    (roomId: string, playerName: string) =>
+    (roomId: string, player: Player) =>
       db.set(`/waitingRooms/${roomId}`, {
         roomId,
-        playerName,
+        player,
       }),
     [db]
   );

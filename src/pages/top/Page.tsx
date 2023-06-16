@@ -1,6 +1,6 @@
 import { chakra, Text, Flex, Button, Box, Divider } from "@chakra-ui/react";
 import { BasicLayout } from "@/layouts/BasicLayout";
-import { useStartGame } from "@/pages/top/hooks/useStartGame";
+import { useStartGame } from "@/pages/top/hooks/useStartGame.ts";
 import { Div } from "@/components/motion";
 import { PlayerNameInput } from "@/components/PlayerNameInput";
 import { WaitingRoomSelect } from "@/components/WaitingRoomSelect.tsx";

@@ -1,4 +1,4 @@
-import { WaitingRooms } from "@/lib/firebase/schema";
+import { WaitingRoom } from "@/lib/firebase/schema";
 import {
   chakra,
   Flex,
@@ -11,7 +11,7 @@ import {
 import { UpButton } from "@/components/UpButton.tsx";
 
 type Props = {
-  waitingRooms: WaitingRooms;
+  waitingRooms: WaitingRoom[];
   onClickBackButton: () => void;
   onSelectRoom: (roomId: string) => void;
 };
@@ -26,16 +26,16 @@ export const WaitingRoomSelect = (props: Props) => (
       </Box>
     ) : (
       <List width="100%">
-        {Object.values(props.waitingRooms).map((game) => (
+        {props.waitingRooms.map((room) => (
           <ListItem
-            key={game.roomId}
+            key={room.roomId}
             cursor="pointer"
             textAlign="center"
             padding="4px"
             _hover={{ backgroundColor: "gray.100" }}
           >
-            <_Button onClick={() => props.onSelectRoom(game.roomId)}>
-              vs {game.playerName}
+            <_Button onClick={() => props.onSelectRoom(room.roomId)}>
+              vs {room.player.name}
             </_Button>
           </ListItem>
         ))}

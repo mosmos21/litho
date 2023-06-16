@@ -1,14 +1,15 @@
-import { PlayerContext, Player } from "@/providers/PlayerProvider/context";
-import { ReactNode, useState } from "react";
-import { randomString } from "@/utils/string.ts";
+import { PlayerContext } from "@/providers/PlayerProvider/context";
+import { ReactNode } from "react";
+import { usePlayersPlayerIdQuery } from "@/api/playersPlayerId/usePlayersPlayerIdQuery";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 export const PlayerProvider = (props: { children: ReactNode }) => {
-  const [player, setPlayer] = useState<Player>({
-    name: randomString(6),
-  });
+  const { currentUser } = useAuthContext();
+  const { player = { id: currentUser.uid, name: "anonymous" } } =
+    usePlayersPlayerIdQuery(currentUser.uid);
 
   return (
-    <PlayerContext.Provider value={{ player, setPlayer }}>
+    <PlayerContext.Provider value={{ player }}>
       {props.children}
     </PlayerContext.Provider>
   );

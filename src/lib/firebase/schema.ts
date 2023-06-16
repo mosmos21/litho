@@ -1,17 +1,28 @@
 import { z } from "zod";
 
-const roomId = z.string();
+const roomIdSchema = z.string();
 
-export type RoomId = z.infer<typeof roomId>;
+export type RoomId = z.infer<typeof roomIdSchema>;
 
-const playerName = z.string().regex(/^[a-zA-Z0-9]{1,32}$/);
+const playerIdSchema = z.string();
+
+export type PlayerId = z.infer<typeof playerIdSchema>;
+
+const playerNameSchema = z.string().regex(/^[a-zA-Z0-9]{1,32}$/);
+
+export const playerSchema = z.object({
+  id: playerIdSchema,
+  name: playerNameSchema,
+});
+
+export type Player = z.infer<typeof playerSchema>;
 
 /**
  * 待機中の部屋の情報
  */
 export const waitingRoomSchema = z.object({
-  roomId,
-  playerName,
+  roomId: roomIdSchema,
+  player: playerSchema,
 });
 
 export type WaitingRoom = z.infer<typeof waitingRoomSchema>;
@@ -21,13 +32,11 @@ export type WaitingRoom = z.infer<typeof waitingRoomSchema>;
  */
 export const waitingRoomsSchema = z.record(z.string(), waitingRoomSchema);
 
-export type WaitingRooms = z.infer<typeof waitingRoomsSchema>;
-
 /**
  * ゲームの共通情報
  */
 const baseGameSchema = z.object({
-  roomId,
+  roomId: roomIdSchema,
 });
 
 /**
@@ -45,8 +54,8 @@ export const gameRecordsSchema = gameRecordSchema.array();
 const playGameSchema = z.object({
   startedAt: z.string(),
   turn: z.object({
-    Black: playerName,
-    White: playerName,
+    Black: playerSchema,
+    White: playerSchema,
   }),
   gameRecords: gameRecordsSchema.optional(),
 });
@@ -76,8 +85,8 @@ export type InitialGame = z.infer<typeof initialGameSchema>;
 export const waitingGameSchema = z
   .object({
     status: z.literal("waiting"),
-    author: z.string(),
-    players: z.record(z.string(), playerName),
+    author: playerSchema,
+    players: z.record(z.string(), playerSchema),
   })
   .merge(baseGameSchema);
 
