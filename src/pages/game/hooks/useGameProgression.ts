@@ -15,7 +15,7 @@ export const useGameProgression = (game: Game) => {
   const [currentPlayerColor, setCurrentPlayerColor] = useState<PieceColor>();
   const [currentGameRecordNumber, setCurrentGameRecordNumber] =
     useState<number>(0);
-  const { ritho, boardRef, onMovePiece, onPlaceTile } = useRitho();
+  const { ritho, onMovePiece, onPlaceTile } = useRitho();
   const { gameRecords } = useGamesGameIdGameRecordsQuery(game.roomId);
   const { setGameRecord } = useGamesGameIdGameRecordsMutation();
 
@@ -71,7 +71,6 @@ export const useGameProgression = (game: Game) => {
   return {
     currentPlayerColor,
     ritho,
-    boardRef,
     onMovePiece: handleMovePiece,
     onPlaceTile: handlePlaceTile,
   };

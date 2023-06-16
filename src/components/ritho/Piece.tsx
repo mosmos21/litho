@@ -19,7 +19,7 @@ type Props = {
   type: PieceType;
   color: PieceColor;
   canMove?: boolean;
-  onDragStart: () => void;
+  onDragStart?: () => void;
 };
 
 export const Piece = (props: Props) => {
@@ -27,7 +27,7 @@ export const Piece = (props: Props) => {
     () => ({
       type: ItemType.PIECE,
       item: () => {
-        props.onDragStart();
+        props.onDragStart?.();
         return {};
       },
       canDrag: props.canMove,
@@ -46,6 +46,7 @@ export const Piece = (props: Props) => {
       justifyContent="center"
       cursor={props.canMove ? "pointer" : "default"}
       display="flex"
+      boxShadow="md"
     >
       {props.type === "King" && (
         <Icon
