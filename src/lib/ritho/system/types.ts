@@ -15,6 +15,7 @@ export type RawRithoState = {
   pieceGrid: PieceGrid;
   tileGrid: TileGrid;
   restTileCount: TileCount;
+  winner?: PieceColor;
 };
 
 export type RithoState = Readonly<{
@@ -23,6 +24,7 @@ export type RithoState = Readonly<{
   pieceCell: PieceCell[][];
   tileCell: TileCell[][];
   restTileCount: TileCount;
+  winner?: PieceColor;
 }>;
 
 export type Ritho = RithoState & {

@@ -1,6 +1,7 @@
-import { Game, Player } from "@/lib/firebase/schema";
+import { FinishedGame, Game, Player } from "@/lib/firebase/schema";
 import { useCallback } from "react";
 import { useFirebaseContext } from "@/providers/FirebaseProvider";
+import { PieceColor } from "@/types/ritho";
 
 export const useGamesGameIdMutation = () => {
   const { db } = useFirebaseContext();
@@ -16,8 +17,25 @@ export const useGamesGameIdMutation = () => {
     [db]
   );
 
+  const updateGameResult = useCallback(
+    (game: Game, winner: PieceColor) => {
+      const finishedGame: Pick<
+        FinishedGame,
+        "status" | "winner" | "finishedAt"
+      > = {
+        status: "finished",
+        winner,
+        finishedAt: new Date().toISOString(),
+      };
+
+      db.update(`/games/${game.roomId}`, finishedGame);
+    },
+    [db]
+  );
+
   return {
     setGame,
     setGamePlayer,
+    updateGameResult,
   };
 };

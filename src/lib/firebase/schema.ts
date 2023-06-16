@@ -37,6 +37,7 @@ export const waitingRoomsSchema = z.record(z.string(), waitingRoomSchema);
  */
 const baseGameSchema = z.object({
   roomId: roomIdSchema,
+  author: playerSchema,
 });
 
 /**
@@ -71,11 +72,10 @@ const gameResultSchema = z.object({
 /**
  * 初期化されたゲームの情報
  */
-export const initialGameSchema = z
-  .object({
-    status: z.literal("initial"),
-  })
-  .merge(baseGameSchema);
+export const initialGameSchema = z.object({
+  status: z.literal("initial"),
+  roomId: roomIdSchema,
+});
 
 export type InitialGame = z.infer<typeof initialGameSchema>;
 
@@ -85,7 +85,6 @@ export type InitialGame = z.infer<typeof initialGameSchema>;
 export const waitingGameSchema = z
   .object({
     status: z.literal("waiting"),
-    author: playerSchema,
     players: z.record(z.string(), playerSchema),
   })
   .merge(baseGameSchema);

@@ -3,6 +3,7 @@ import {
   get,
   set,
   push,
+  update,
   remove,
   ref,
   Database,
@@ -19,6 +20,9 @@ const _set = (db: Database) => (key: string, value: unknown) =>
 
 const _push = (db: Database) => (key: string, value: unknown) =>
   push(ref(db, key), value);
+
+const _update = (db: Database) => (key: string, value: object) =>
+  update(ref(db, key), value);
 
 const _remove = (db: Database) => (key: string) => remove(ref(db, key));
 
@@ -48,6 +52,7 @@ export const getDatabaseInstance = (app: FirebaseApp) => {
     get: _get(db),
     set: _set(db),
     push: _push(db),
+    update: _update(db),
     remove: _remove(db),
     onValue: _onValue(db),
   };
