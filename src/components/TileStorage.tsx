@@ -38,6 +38,7 @@ export const TileStorage = (props: Props) => {
       <Box position="relative" height={`${TILE_CELL_SIZE}px`}>
         {numbers(props.tileCount["VerticalAndHorizontal"]).map((i) => (
           <Tile
+            key={i}
             size={60}
             moveable={props.moveable}
             type="VerticalAndHorizontal"
