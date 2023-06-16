@@ -8,6 +8,7 @@ const CIRCLE_SIZE_RATE = 0.25;
 type Props = {
   size: number;
   type: TileType;
+  moveable?: boolean;
   onDragStart?: () => void;
 };
 
@@ -20,8 +21,9 @@ export const Tile = (props: Props) => {
         props.onDragStart?.();
         return {};
       },
+      canDrag: props.moveable,
     }),
-    [props.onDragStart]
+    [props.moveable, props.onDragStart]
   );
 
   return (
@@ -33,7 +35,7 @@ export const Tile = (props: Props) => {
       bg="gray.500"
       borderRadius="4px"
       overflow="hidden"
-      cursor="pointer"
+      cursor={props.moveable ? "pointer" : "default"}
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />
       {props.type !== "Diagonal" && <VerticalAndHorizontal />}

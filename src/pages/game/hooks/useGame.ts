@@ -9,9 +9,13 @@ export const useGame = () => {
 
   useGamePreparation(game);
   const gameProgression = useGameProgression(game);
+  const { ritho, currentPlayerColor } = gameProgression;
 
   return {
     game,
+    moveablePieceColor:
+      ritho.turn === currentPlayerColor ? currentPlayerColor : undefined,
+    moveableTile: ritho.turn === currentPlayerColor,
     ...gameProgression,
   };
 };

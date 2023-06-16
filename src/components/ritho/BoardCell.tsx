@@ -26,7 +26,6 @@ export const BoardCell = (props: Props) => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      cursor="pointer"
     >
       {props.children}
     </GridItem>

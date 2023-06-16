@@ -12,6 +12,8 @@ export const GamePage = () => {
   const {
     game,
     currentPlayerColor,
+    moveablePieceColor,
+    moveableTile,
     ritho,
     boardRef,
     onMovePiece,
@@ -41,9 +43,7 @@ export const GamePage = () => {
           ref={boardRef}
           size={DEFAULT_BOARD_SIZE}
           cells={ritho.pieceCell}
-          draggableColor={
-            ritho.turn === currentPlayerColor ? currentPlayerColor : undefined
-          }
+          moveableColor={moveablePieceColor}
           {...pieceDnd}
         />
         <Flex flexDirection="column" gap="24px">
@@ -53,6 +53,7 @@ export const GamePage = () => {
             onDrop={tileDnd.onDrop}
           />
           <TileStorage
+            moveable={moveableTile}
             tileCount={ritho.restTileCount}
             onDragTile={tileDnd.onDragStart}
           />

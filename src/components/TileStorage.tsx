@@ -5,6 +5,7 @@ import { numbers } from "@/utils/array";
 
 type Props = {
   tileCount: TileCount;
+  moveable?: boolean;
   onDragTile: (type: PlaceableTile) => void;
 };
 
@@ -15,6 +16,7 @@ export const TileStorage = (props: Props) => (
         <Tile
           key={i}
           size={60}
+          moveable={props.moveable}
           type="VerticalAndHorizontal"
           onDragStart={() => props.onDragTile("VerticalAndHorizontal")}
         />
@@ -23,10 +25,11 @@ export const TileStorage = (props: Props) => (
     <Flex gap="8px">
       {numbers(props.tileCount["Diagonal"]).map((i) => (
         <Tile
-          onDragStart={() => props.onDragTile("Diagonal")}
           key={i}
           size={60}
+          moveable={props.moveable}
           type="Diagonal"
+          onDragStart={() => props.onDragTile("Diagonal")}
         />
       ))}
     </Flex>

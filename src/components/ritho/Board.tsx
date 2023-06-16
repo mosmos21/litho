@@ -9,7 +9,7 @@ import { Grid } from "@chakra-ui/react";
 type Props = {
   size: number;
   cells: PieceCell[][];
-  draggableColor?: PieceColor;
+  moveableColor?: PieceColor;
   onDragStart: (from: Coord) => void;
   onDrop: (to: Coord) => void;
 };
@@ -41,7 +41,7 @@ export const Board = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 size={pieceSize}
                 type={cell.piece.type}
                 color={cell.piece.color}
-                draggable={props.draggableColor === cell.piece.color}
+                canMove={props.moveableColor === cell.piece.color}
                 onDragStart={() => props.onDragStart(cell.coord)}
               />
             )}
