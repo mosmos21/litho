@@ -72,8 +72,7 @@ const movePieceAction = (
     return state;
   }
   const fromPiece = state.pieceGrid.get(from);
-  const toPiece = state.pieceGrid.get(to);
-  if (!toPiece || !fromPiece || fromPiece.color !== state.turn) {
+  if (!fromPiece || fromPiece.color !== state.turn) {
     return state;
   }
 
@@ -83,7 +82,8 @@ const movePieceAction = (
     pieceGrid: state.pieceGrid.move(from, to),
   };
 
-  if (toPiece.type === "King") {
+  const toPiece = state.pieceGrid.get(to);
+  if (toPiece?.type === "King") {
     nextState.winner = state.turn;
   }
 
@@ -93,6 +93,7 @@ const movePieceAction = (
 const doAction =
   (state: RawRithoState) =>
   (action: Action): Ritho => {
+    console.log("doAction", { action });
     switch (action.type) {
       case "PlaceTile":
         return build(placeTileAction(state, action.tile, action.coord));
