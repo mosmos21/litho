@@ -1,14 +1,12 @@
-import { ReactNode, useMemo } from "react";
-import { getAppInstance } from "@/lib/firebase";
-import { getDB } from "@/lib/firebase/database";
+import { ReactNode } from "react";
 import { FirebaseContext } from "@/providers/FirebaseProvider/context";
+import { useFirebase } from "@/providers/FirebaseProvider/hooks.ts";
 
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
-  const app = useMemo(() => getAppInstance(), []);
-  const db = useMemo(() => getDB(app), [app]);
+  const firebase = useFirebase();
 
   return (
-    <FirebaseContext.Provider value={{ db }}>
+    <FirebaseContext.Provider value={firebase}>
       {children}
     </FirebaseContext.Provider>
   );
