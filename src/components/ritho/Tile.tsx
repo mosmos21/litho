@@ -1,5 +1,5 @@
 import { TileType } from "@/types/ritho";
-import { chakra, Box } from "@chakra-ui/react";
+import { chakra, Box, StyleProps } from "@chakra-ui/react";
 import { useDrag } from "react-dnd";
 import { ItemType } from "@/utils/reactDnd";
 
@@ -10,6 +10,7 @@ type Props = {
   type: TileType;
   moveable?: boolean;
   onDragStart?: () => void;
+  style?: StyleProps;
 };
 
 export const Tile = (props: Props) => {
@@ -36,7 +37,8 @@ export const Tile = (props: Props) => {
       borderRadius="4px"
       overflow="hidden"
       cursor={props.moveable ? "pointer" : "default"}
-      boxShadow="md"
+      boxShadow="lg"
+      {...props.style}
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />
       {props.type !== "Diagonal" && <VerticalAndHorizontal />}

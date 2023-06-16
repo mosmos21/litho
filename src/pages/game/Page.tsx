@@ -27,7 +27,7 @@ export const GamePage = () => {
 
   return (
     <BasicLayout>
-      <Flex gap="12px" flexDirection={{ sm: "column", lg: "row" }}>
+      <Flex gap="12px" flexDirection={{ base: "column", lg: "row" }}>
         <Column ref={firstColumnRef}>
           <GameInformation
             game={game}
@@ -53,6 +53,7 @@ export const GamePage = () => {
             moveable={moveableTile}
             tileCount={ritho.restTileCount}
             onDragTile={tileDnd.onDragStart}
+            style={{ width: "100%" }}
           />
         </Column>
       </Flex>
@@ -65,6 +66,6 @@ const Column = chakra(Flex, {
     flexDirection: "column",
     gap: "12px",
     alignItems: "center",
-    width: { sm: "100%", lg: "calc(50% - 6px)" },
+    width: { base: "100%", lg: "calc(50% - 6px)" },
   },
 });
