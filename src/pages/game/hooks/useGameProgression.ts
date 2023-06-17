@@ -21,7 +21,7 @@ export const useGameProgression = (game: Game) => {
   const [currentPlayerColor, setCurrentPlayerColor] = useState<PieceColor>();
   const [currentGameRecordNumber, setCurrentGameRecordNumber] =
     useState<number>(0);
-  const { litho, onMovePiece, onPlaceTile } = useLitho();
+  const { litho, onAction } = useLitho();
   const { gameRecords } = useGamesGameIdGameRecordsQuery(game.roomId);
   const { setGameRecord } = useGamesGameIdGameRecordsMutation();
 
@@ -39,10 +39,10 @@ export const useGameProgression = (game: Game) => {
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
       setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
-        onMovePiece(from, to)
+        onAction(action)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onMovePiece, litho]
+    [setGameRecord, game.roomId, gameRecords.length, onAction, litho]
   );
 
   const handlePlaceTile = useCallback(
@@ -53,10 +53,10 @@ export const useGameProgression = (game: Game) => {
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
       setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
-        onPlaceTile(tile, coord)
+        onAction(action)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onPlaceTile, litho]
+    [setGameRecord, game.roomId, gameRecords.length, onAction, litho]
   );
 
   useEffect(() => {
@@ -72,19 +72,9 @@ export const useGameProgression = (game: Game) => {
   useEffect(() => {
     const records = gameRecords.slice(currentGameRecordNumber);
 
-    records.forEach((record) => {
-      const action = decodeAction(record);
-      switch (action.type) {
-        case "MovePiece":
-          onMovePiece(action.from, action.to);
-          break;
-        case "PlaceTile":
-          onPlaceTile(action.tile, action.coord);
-          break;
-      }
-    });
+    records.map(decodeAction).forEach(onAction);
     setCurrentGameRecordNumber(gameRecords.length);
-  }, [gameRecords, currentGameRecordNumber, onMovePiece, onPlaceTile]);
+  }, [gameRecords, currentGameRecordNumber, onAction]);
 
   return {
     currentPlayerColor,
