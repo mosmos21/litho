@@ -1,7 +1,7 @@
 import { FinishedGame, Game, Player } from "@/lib/firebase/schema";
 import { useCallback } from "react";
 import { useFirebaseContext } from "@/providers/FirebaseProvider";
-import { PieceColor } from "@/types/ritho";
+import { PieceColor } from "@/types/litho";
 
 export const useGamesGameIdMutation = () => {
   const { db } = useFirebaseContext();

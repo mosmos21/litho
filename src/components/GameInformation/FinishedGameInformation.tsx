@@ -1,4 +1,4 @@
-import { PieceColor } from "@/types/ritho";
+import { PieceColor } from "@/types/litho";
 import { StyleProps, Text } from "@chakra-ui/react";
 
 type Props = {

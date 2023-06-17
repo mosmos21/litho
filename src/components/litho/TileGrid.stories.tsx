@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TileGrid } from "@/components/ritho/TileGrid";
-import { buildTileGrid } from "@/lib/ritho/tileGrid";
+import { TileGrid } from "@/components/litho/TileGrid";
+import { buildTileGrid } from "@/lib/litho/tileGrid";
 import { TILE_GRID_MAX_SIZE } from "@/constants";
 
 const tileGrid = buildTileGrid();

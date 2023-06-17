@@ -1,16 +1,16 @@
 import { MouseEvent, TouchEvent, useCallback, useState } from "react";
-import { Coord, PieceColor } from "@/types/ritho";
-import { Ritho } from "@/lib/ritho/system/types";
+import { Coord, PieceColor } from "@/types/litho";
+import { Litho } from "@/lib/litho/system/types";
 import { sameCoord } from "@/utils/coord";
 
 type Props = {
   currentPlayerColor?: PieceColor;
-  ritho: Ritho;
+  litho: Litho;
   onMovePiece: (from: Coord, to: Coord) => void;
 };
 
 export const usePieceMovement = (props: Props) => {
-  const { pieceGrid, tileGrid, turn } = props.ritho;
+  const { pieceGrid, tileGrid, turn } = props.litho;
   const isCurrentPlayerTurn = props.currentPlayerColor === turn;
   const [from, setFrom] = useState<Coord>();
   const [moveableCoords, setMoveableCoords] = useState<Coord[]>([]);
@@ -18,12 +18,12 @@ export const usePieceMovement = (props: Props) => {
   const handleSelectFrom = useCallback(
     (coord: Coord) => {
       if (!isCurrentPlayerTurn) return;
-      if (!props.ritho.isMoveablePiece(coord)) return;
+      if (!props.litho.isMoveablePiece(coord)) return;
 
       setFrom(coord);
       setMoveableCoords(pieceGrid.getMoveablePieceCoords(tileGrid, coord));
     },
-    [props.ritho, isCurrentPlayerTurn, pieceGrid, tileGrid]
+    [props.litho, isCurrentPlayerTurn, pieceGrid, tileGrid]
   );
 
   const handleSelectTo = useCallback(
@@ -31,11 +31,11 @@ export const usePieceMovement = (props: Props) => {
       if (!isCurrentPlayerTurn) return;
       if (!from) return;
 
-      if (props.ritho.pieceGrid.canMovePiece(props.ritho.tileGrid, from, to)) {
+      if (props.litho.pieceGrid.canMovePiece(props.litho.tileGrid, from, to)) {
         props.onMovePiece(from, to);
         setMoveableCoords([]);
         setFrom(undefined);
-      } else if (props.ritho.isMoveablePiece(to)) {
+      } else if (props.litho.isMoveablePiece(to)) {
         handleSelectFrom(to);
       } else {
         setMoveableCoords([]);

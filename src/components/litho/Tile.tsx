@@ -1,4 +1,4 @@
-import { TileType } from "@/types/ritho";
+import { TileType } from "@/types/litho";
 import { chakra, Box, StyleProps } from "@chakra-ui/react";
 import { useDrag } from "react-dnd";
 import { ItemType } from "@/utils/reactDnd";

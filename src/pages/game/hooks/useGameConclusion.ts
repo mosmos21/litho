@@ -1,12 +1,12 @@
 import { Game } from "@/lib/firebase/schema";
-import { Ritho } from "@/lib/ritho/system/types";
+import { Litho } from "@/lib/litho/system/types";
 import { useEffect, useCallback } from "react";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import { useGamesGameIdMutation } from "@/api";
-import { PieceColor } from "@/types/ritho";
+import { PieceColor } from "@/types/litho";
 import { isOngoingGame } from "@/utils/game";
 
-export const useGameConclusion = (game: Game, ritho: Ritho) => {
+export const useGameConclusion = (game: Game, litho: Litho) => {
   const { player } = usePlayerContext();
   const { updateGameResult } = useGamesGameIdMutation();
 
@@ -18,8 +18,8 @@ export const useGameConclusion = (game: Game, ritho: Ritho) => {
   useEffect(() => {
     if (!isOngoingGame(game)) return;
     if (game.author.id !== player.id) return;
-    if (!ritho.winner) return;
+    if (!litho.winner) return;
 
-    finishGame(ritho.winner);
-  }, [ritho, game, player, finishGame]);
+    finishGame(litho.winner);
+  }, [litho, game, player, finishGame]);
 };

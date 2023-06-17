@@ -4,7 +4,7 @@ import {
   PieceType,
   PlaceableTile,
   PlaceTileAction,
-} from "@/types/ritho";
+} from "@/types/litho";
 
 /***
  * 棋譜の仕様

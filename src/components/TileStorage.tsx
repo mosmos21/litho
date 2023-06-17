@@ -1,6 +1,6 @@
-import { Tile } from "@/components/ritho/Tile";
+import { Tile } from "@/components/litho/Tile";
 import { Flex, Box, StyleProps } from "@chakra-ui/react";
-import { PlaceableTile, TileCount } from "@/types/ritho";
+import { PlaceableTile, TileCount } from "@/types/litho";
 import { numbers } from "@/utils/array";
 import { useElementSize } from "@/pages/game/hooks/useElementSize";
 

@@ -1,5 +1,5 @@
-import { Board } from "@/components/ritho/Board";
-import { TileGrid } from "@/components/ritho/TileGrid";
+import { Board } from "@/components/litho/Board";
+import { TileGrid } from "@/components/litho/TileGrid";
 import {
   BOARD_MAX_SIZE,
   TILE_GRID_BORDER_CELL_COUNT,
@@ -20,17 +20,17 @@ export const GamePage = () => {
     currentPlayerColor,
     moveablePieceColor,
     moveableTile,
-    ritho,
+    litho,
     onMovePiece,
     onPlaceTile,
   } = useGame();
   const pieceMovement = usePieceMovement({
     currentPlayerColor,
-    ritho,
+    litho,
     onMovePiece,
   });
   const tileMovement = useTileMovement({
-    tileGrid: ritho.tileGrid,
+    tileGrid: litho.tileGrid,
     onPlaceTile,
   });
   const [boardSize, firstColumnRef] = useElementSize(BOARD_MAX_SIZE);
@@ -42,13 +42,13 @@ export const GamePage = () => {
         <Column ref={firstColumnRef}>
           <GameInformation
             game={game}
-            currentTurnColor={ritho.turn}
+            currentTurnColor={litho.turn}
             style={{ margin: "12px 0" }}
           />
           <Board
             reverse={currentPlayerColor === "White"}
             size={boardSize}
-            cells={ritho.pieceGrid.toArray()}
+            cells={litho.pieceGrid.toArray()}
             moveableColor={moveablePieceColor}
             {...pieceMovement}
           />
@@ -57,13 +57,13 @@ export const GamePage = () => {
           <TileGrid
             reverse={currentPlayerColor === "White"}
             size={tileGridSize}
-            cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
+            cells={litho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
             onSelectCell={tileMovement.onSelectTileGridCell}
             placeableCoords={tileMovement.placeableCoords}
           />
           <TileStorage
             moveable={moveableTile}
-            tileCount={ritho.restTileCount}
+            tileCount={litho.restTileCount}
             onSelectTile={tileMovement.onSelectTile}
             style={{ width: "100%" }}
           />

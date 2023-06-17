@@ -1,14 +1,14 @@
-import { buildTileGrid } from "@/lib/ritho/tileGrid";
-import { buildPieceGrid } from "@/lib/ritho/pieceGrid";
+import { buildTileGrid } from "@/lib/litho/tileGrid";
+import { buildPieceGrid } from "@/lib/litho/pieceGrid";
 import {
   FIRST_TURN_ACTION_COUNT,
   FIRST_TURN_COLOR,
   TILE_MAX_COUNT,
-} from "@/constants/ritho";
-import { RawRithoState } from "@/lib/ritho/system/types";
-import { build } from "@/lib/ritho/system/action";
+} from "@/constants/litho";
+import { RawLithoState } from "@/lib/litho/system/types";
+import { build } from "@/lib/litho/system/action";
 
-const initRithoState = (): RawRithoState => {
+const initLithoState = (): RawLithoState => {
   const tileGrid = buildTileGrid();
   const pieceGrid = buildPieceGrid();
 
@@ -26,4 +26,4 @@ const initRithoState = (): RawRithoState => {
   };
 };
 
-export const buildRitho = () => build(initRithoState());
+export const buildLitho = () => build(initLithoState());

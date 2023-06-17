@@ -6,35 +6,35 @@ import {
   PieceColor,
   PlaceableTile,
   PlaceTileAction,
-} from "@/types/ritho";
+} from "@/types/litho";
 import { useState, useEffect, useCallback } from "react";
-import { useRitho } from "@/pages/game/hooks/useRitho";
+import { useLitho } from "@/pages/game/hooks/useLitho";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import {
   useGamesGameIdGameRecordsMutation,
   useGamesGameIdGameRecordsQuery,
 } from "@/api";
-import { decodeAction, encodeAction } from "@/lib/ritho/gameRecord";
+import { decodeAction, encodeAction } from "@/lib/litho/gameRecord";
 
 export const useGameProgression = (game: Game) => {
   const { player } = usePlayerContext();
   const [currentPlayerColor, setCurrentPlayerColor] = useState<PieceColor>();
   const [currentGameRecordNumber, setCurrentGameRecordNumber] =
     useState<number>(0);
-  const { ritho, onMovePiece, onPlaceTile } = useRitho();
+  const { litho, onMovePiece, onPlaceTile } = useLitho();
   const { gameRecords } = useGamesGameIdGameRecordsQuery(game.roomId);
   const { setGameRecord } = useGamesGameIdGameRecordsMutation();
 
   const handleMovePiece = useCallback(
     (from: Coord, to: Coord) => {
-      const piece = ritho.pieceGrid.get(to);
+      const piece = litho.pieceGrid.get(to);
       const action: MovePieceAction = {
         type: "MovePiece",
         from,
         to,
         capture: piece?.type,
       };
-      if (!ritho.isValidAction(action)) return;
+      if (!litho.isValidAction(action)) return;
 
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
@@ -42,13 +42,13 @@ export const useGameProgression = (game: Game) => {
         onMovePiece(from, to)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onMovePiece, ritho]
+    [setGameRecord, game.roomId, gameRecords.length, onMovePiece, litho]
   );
 
   const handlePlaceTile = useCallback(
     (tile: PlaceableTile, coord: Coord) => {
       const action: PlaceTileAction = { type: "PlaceTile", tile, coord };
-      if (!ritho.isValidAction(action)) return;
+      if (!litho.isValidAction(action)) return;
 
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
@@ -56,7 +56,7 @@ export const useGameProgression = (game: Game) => {
         onPlaceTile(tile, coord)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onPlaceTile, ritho]
+    [setGameRecord, game.roomId, gameRecords.length, onPlaceTile, litho]
   );
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const useGameProgression = (game: Game) => {
 
   return {
     currentPlayerColor,
-    ritho,
+    litho,
     onMovePiece: handleMovePiece,
     onPlaceTile: handlePlaceTile,
   };

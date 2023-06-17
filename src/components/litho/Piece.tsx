@@ -1,5 +1,5 @@
 import { BackgroundProps, Icon, ColorProps, Box } from "@chakra-ui/react";
-import { PieceType, PieceColor } from "@/types/ritho";
+import { PieceType, PieceColor } from "@/types/litho";
 import { FaChessKing } from "react-icons/fa";
 import { useDrag } from "react-dnd";
 import { ItemType } from "@/utils/reactDnd.ts";
