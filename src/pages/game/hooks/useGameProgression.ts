@@ -15,6 +15,7 @@ import {
   useGamesGameIdGameRecordsQuery,
 } from "@/api";
 import { decodeAction, encodeAction } from "@/lib/ritho/gameRecord";
+import { InvalidActionError } from "@/lib/ritho/error.ts";
 
 export const useGameProgression = (game: Game) => {
   const { player } = usePlayerContext();
@@ -28,12 +29,13 @@ export const useGameProgression = (game: Game) => {
   const handleMovePiece = useCallback(
     (from: Coord, to: Coord) => {
       const action: MovePieceAction = { type: "MovePiece", from, to };
-      if (!ritho.isValidAction(action)) return;
+      if (!ritho.isValidAction(action))
+        return Promise.reject(new InvalidActionError(action));
 
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
-      setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
-        onMovePiece(from, to)
+      return setGameRecord(game.roomId, gameRecords.length, gameRecord).then(
+        () => onMovePiece(from, to)
       );
     },
     [setGameRecord, game.roomId, gameRecords.length, onMovePiece, ritho]
@@ -42,12 +44,13 @@ export const useGameProgression = (game: Game) => {
   const handlePlaceTile = useCallback(
     (tile: PlaceableTile, coord: Coord) => {
       const action: PlaceTileAction = { type: "PlaceTile", tile, coord };
-      if (!ritho.isValidAction(action)) return;
+      if (!ritho.isValidAction(action))
+        return Promise.reject(new InvalidActionError(action));
 
       setCurrentGameRecordNumber((prev) => prev + 1);
       const gameRecord = encodeAction(action);
-      setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
-        onPlaceTile(tile, coord)
+      return setGameRecord(game.roomId, gameRecords.length, gameRecord).then(
+        () => onPlaceTile(tile, coord)
       );
     },
     [setGameRecord, game.roomId, gameRecords.length, onPlaceTile, ritho]

@@ -37,7 +37,11 @@ const isValidMovePieceAction = (
 
   // NOTE: 同じ駒は連続で動かすことができない
   const prevAction = state.prevActions[0];
-  return !(prevAction.type === "MovePiece" && sameCoord(prevAction.to, from));
+  return !(
+    prevAction &&
+    prevAction.type === "MovePiece" &&
+    sameCoord(prevAction.to, from)
+  );
 };
 
 const isValidAction =

@@ -4,7 +4,7 @@ import { TileGrid } from "@/lib/ritho/tileGrid";
 
 type Props = {
   tileGrid: TileGrid;
-  onPlaceTile: (tile: PlaceableTile, coord: Coord) => void;
+  onPlaceTile: (tile: PlaceableTile, coord: Coord) => Promise<void>;
 };
 
 export const useTileMovement = (props: Props) => {
@@ -18,8 +18,14 @@ export const useTileMovement = (props: Props) => {
     (coord: Coord) => {
       if (!tile) return;
 
-      props.onPlaceTile(tile, coord);
-      setTile(undefined);
+      props
+        .onPlaceTile(tile, coord)
+        .then(() => {
+          setTile(undefined);
+        })
+        .catch(() => {
+          // NOTE: 正しく動かせなかった時はtileはそのまま残す
+        });
     },
     [tile, props]
   );

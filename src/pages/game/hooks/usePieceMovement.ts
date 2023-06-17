@@ -4,7 +4,7 @@ import { PieceGrid } from "@/lib/ritho/pieceGrid";
 
 type Props = {
   pieceGrid: PieceGrid;
-  onMovePiece: (from: Coord, to: Coord) => void;
+  onMovePiece: (from: Coord, to: Coord) => Promise<void>;
 };
 
 export const usePieceMovement = (props: Props) => {
@@ -18,8 +18,9 @@ export const usePieceMovement = (props: Props) => {
     (to: Coord) => {
       if (!from) return;
 
-      props.onMovePiece(from, to);
-      setFrom(undefined);
+      props.onMovePiece(from, to).then(() => {
+        setFrom(undefined);
+      });
     },
     [from, props]
   );
@@ -29,8 +30,14 @@ export const usePieceMovement = (props: Props) => {
       event.preventDefault();
 
       if (from) {
-        props.onMovePiece(from, coord);
-        setFrom(undefined);
+        props
+          .onMovePiece(from, coord)
+          .then(() => {
+            setFrom(undefined);
+          })
+          .catch(() => {
+            // NOTE: 正しく動かせなかった時はfromはそのまま残す
+          });
       } else {
         setFrom(coord);
       }
