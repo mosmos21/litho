@@ -86,6 +86,7 @@ export type MovePieceAction = {
   type: "MovePiece";
   from: Coord;
   to: Coord;
+  capture?: PieceType;
 };
 
 /**
