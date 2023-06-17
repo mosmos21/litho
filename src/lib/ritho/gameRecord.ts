@@ -1,7 +1,7 @@
 import {
   Action,
-  Coord,
   MovePieceAction,
+  PieceType,
   PlaceableTile,
   PlaceTileAction,
 } from "@/types/ritho";
@@ -13,7 +13,9 @@ import {
  *   - 横軸をアルファベット、縦軸を数字で表す
  *   - 先手(黒)側からみた時に、左下が A1、右上が G7
  *   - 駒の動きは、移動元の座標と移動先の座標をハイフンで繋げて表す。
- *     - 例: A1-A2, G7-F6
+ *     - 例: A1A2, G7F6
+ *   - 駒をとる移動の場合は+を最後につける、取った駒がキングの時は#をつける
+ *     - 例: A1-A2+, G7-F6#
  * - タイルの配置の表記
  *   - 横軸、縦軸を数字で表す
  *   - 中央の全方向タイルを中心の [0,0] とする
@@ -29,10 +31,33 @@ import {
 const X_COORDS = "ABCDEFG";
 
 /**
+ * 取った駒の棋譜の表記を生成する
+ */
+const encodeCapturedPiece = (piece?: PieceType) => {
+  switch (piece) {
+    case "King":
+      return "#";
+    case "Blank":
+      return "+";
+    default:
+      return undefined;
+  }
+};
+
+/**
  * 移動した座標から棋譜の駒の動きの表記を生成する
  */
-const encodePiecePlacement = (from: Coord, to: Coord) =>
-  [X_COORDS[from.x], from.y + 1, "-", X_COORDS[to.x], to.y + 1].join("");
+const encodePiecePlacement = ({ from, to, capture }: MovePieceAction) =>
+  [
+    X_COORDS[from.x],
+    from.y + 1,
+    "-",
+    X_COORDS[to.x],
+    to.y + 1,
+    encodeCapturedPiece(capture),
+  ]
+    .filter(Boolean)
+    .join("");
 
 /**
  * タイルの種類と棋譜の表記の対応
@@ -44,7 +69,7 @@ const TILE_TYPE_MAP: Record<PlaceableTile, string> = {
 /**
  * タイルの種類と座標から棋譜のタイルの配置の表記を生成する
  */
-const encodeTilePlacement = (tile: PlaceableTile, coord: Coord) =>
+const encodeTilePlacement = ({ tile, coord }: PlaceTileAction) =>
   `${TILE_TYPE_MAP[tile]}[${coord.x},${coord.y}]`;
 
 /**
@@ -53,16 +78,30 @@ const encodeTilePlacement = (tile: PlaceableTile, coord: Coord) =>
 export const encodeAction = (action: Action) => {
   switch (action.type) {
     case "MovePiece":
-      return encodePiecePlacement(action.from, action.to);
+      return encodePiecePlacement(action);
     case "PlaceTile":
-      return encodeTilePlacement(action.tile, action.coord);
+      return encodeTilePlacement(action);
   }
 };
 
 /**
  * 棋譜の駒の動きの表記ルール
  */
-const PIECE_PLACEMENT_REGEXP = /^([A-G])([1-7])-([A-G])([1-7])$/;
+const PIECE_PLACEMENT_REGEXP = /^([A-G])([1-7])-([A-G])([1-7])([+#])?$/;
+
+/**
+ * 取った駒の表記から駒の種類を生成する
+ */
+const decodeCapturedPiece = (piece: string) => {
+  switch (piece) {
+    case "#":
+      return "King";
+    case "+":
+      return "Blank";
+    default:
+      return undefined;
+  }
+};
 
 /**
  * 棋譜の表記から駒の動きのアクションを生成する
@@ -71,7 +110,7 @@ const decodePiecePlacement = (
   gameRecord: string
 ): MovePieceAction | undefined => {
   const match = gameRecord.match(PIECE_PLACEMENT_REGEXP);
-  if (!match || match.length !== 5) {
+  if (!match || match.length < 5) {
     return undefined;
   }
 
@@ -83,11 +122,13 @@ const decodePiecePlacement = (
     x: X_COORDS.indexOf(match[3].toUpperCase()),
     y: Number(match[4]) - 1,
   };
+  const capture = decodeCapturedPiece(match[5]);
 
   return {
     type: "MovePiece",
     from,
     to,
+    capture,
   };
 };
 

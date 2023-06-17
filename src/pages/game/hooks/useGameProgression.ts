@@ -8,7 +8,7 @@ import {
   PlaceTileAction,
 } from "@/types/ritho";
 import { useState, useEffect, useCallback } from "react";
-import { useRitho } from "@/pages/game/hooks/useRitho.ts";
+import { useRitho } from "@/pages/game/hooks/useRitho";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import {
   useGamesGameIdGameRecordsMutation,
@@ -27,7 +27,13 @@ export const useGameProgression = (game: Game) => {
 
   const handleMovePiece = useCallback(
     (from: Coord, to: Coord) => {
-      const action: MovePieceAction = { type: "MovePiece", from, to };
+      const piece = ritho.pieceGrid.get(to);
+      const action: MovePieceAction = {
+        type: "MovePiece",
+        from,
+        to,
+        capture: piece?.type,
+      };
       if (!ritho.isValidAction(action)) return;
 
       setCurrentGameRecordNumber((prev) => prev + 1);
