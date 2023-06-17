@@ -21,6 +21,8 @@ const initRithoState = (): RawRithoState => {
       VerticalAndHorizontal: TILE_MAX_COUNT.VerticalAndHorizontal,
       Diagonal: TILE_MAX_COUNT.Diagonal,
     },
+    currentActions: [],
+    prevActions: [],
   };
 };
 

@@ -1,14 +1,20 @@
 import { Game } from "@/lib/firebase/schema";
 import { isOngoingGame } from "@/utils/game";
-import { Coord, PieceColor, PlaceableTile } from "@/types/ritho";
+import {
+  Coord,
+  MovePieceAction,
+  PieceColor,
+  PlaceableTile,
+  PlaceTileAction,
+} from "@/types/ritho";
 import { useState, useEffect, useCallback } from "react";
-import { useRitho } from "@/hooks/useRitho.ts";
+import { useRitho } from "@/hooks/useRitho";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import {
   useGamesGameIdGameRecordsMutation,
   useGamesGameIdGameRecordsQuery,
 } from "@/api";
-import { decodeAction, encodeAction } from "@/lib/ritho/gameRecord.ts";
+import { decodeAction, encodeAction } from "@/lib/ritho/gameRecord";
 
 export const useGameProgression = (game: Game) => {
   const { player } = usePlayerContext();
@@ -21,24 +27,30 @@ export const useGameProgression = (game: Game) => {
 
   const handleMovePiece = useCallback(
     (from: Coord, to: Coord) => {
+      const action: MovePieceAction = { type: "MovePiece", from, to };
+      if (!ritho.isValidAction(action)) return;
+
       setCurrentGameRecordNumber((prev) => prev + 1);
-      const gameRecord = encodeAction({ type: "MovePiece", from, to });
+      const gameRecord = encodeAction(action);
       setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
         onMovePiece(from, to)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onMovePiece]
+    [setGameRecord, game.roomId, gameRecords.length, onMovePiece, ritho]
   );
 
   const handlePlaceTile = useCallback(
     (tile: PlaceableTile, coord: Coord) => {
+      const action: PlaceTileAction = { type: "PlaceTile", tile, coord };
+      if (!ritho.isValidAction(action)) return;
+
       setCurrentGameRecordNumber((prev) => prev + 1);
-      const gameRecord = encodeAction({ type: "PlaceTile", tile, coord });
+      const gameRecord = encodeAction(action);
       setGameRecord(game.roomId, gameRecords.length, gameRecord).then(() =>
         onPlaceTile(tile, coord)
       );
     },
-    [setGameRecord, game.roomId, gameRecords.length, onPlaceTile]
+    [setGameRecord, game.roomId, gameRecords.length, onPlaceTile, ritho]
   );
 
   useEffect(() => {

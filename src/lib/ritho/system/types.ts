@@ -11,22 +11,30 @@ import { PieceGrid } from "@/lib/ritho/pieceGrid";
 export type RawRithoState = {
   turn: PieceColor;
   restActionCount: number;
-  currentAction?: Action["type"];
+  restTileCount: TileCount;
+  winner?: PieceColor;
+  currentActions: Action[];
+  prevActions: Action[];
   pieceGrid: PieceGrid;
   tileGrid: TileGrid;
-  restTileCount: TileCount;
-  winner?: PieceColor;
 };
 
-export type RithoState = Readonly<{
-  turn: PieceColor;
-  restActionCount: number;
-  pieceCell: PieceCell[][];
-  tileCell: TileCell[][];
-  restTileCount: TileCount;
-  winner?: PieceColor;
-}>;
+export type RithoState = Readonly<
+  Pick<
+    RawRithoState,
+    | "turn"
+    | "restActionCount"
+    | "restTileCount"
+    | "winner"
+    | "currentActions"
+    | "prevActions"
+  > & {
+    pieceCell: PieceCell[][];
+    tileCell: TileCell[][];
+  }
+>;
 
 export type Ritho = RithoState & {
   action: (action: Action) => Ritho;
+  isValidAction: (action: Action) => boolean;
 };
