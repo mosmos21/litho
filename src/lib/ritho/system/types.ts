@@ -1,5 +1,5 @@
 import { TileGrid } from "@/lib/ritho/tileGrid";
-import { Action, PieceColor, TileCount } from "@/types/ritho";
+import { Action, PieceColor, TileCount, Coord } from "@/types/ritho";
 import { PieceGrid } from "@/lib/ritho/pieceGrid";
 
 export type RawRithoState = {
@@ -18,4 +18,5 @@ export type RithoState = Readonly<RawRithoState>;
 export type Ritho = RithoState & {
   action: (action: Action) => Ritho;
   isValidAction: (action: Action) => boolean;
+  isMoveablePiece: (coord: Coord) => boolean;
 };

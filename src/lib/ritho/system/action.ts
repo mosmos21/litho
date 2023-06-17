@@ -3,6 +3,7 @@ import {
   MovePieceAction,
   PieceColor,
   PlaceTileAction,
+  Coord,
 } from "@/types/ritho";
 import { Ritho, RawRithoState } from "@/lib/ritho/system/types";
 import { INITIAL_ACTION_COUNT } from "@/constants/ritho";
@@ -18,6 +19,22 @@ const isValidPlaceTileAction = (
   return state.tileGrid.canPlaceTile(coord);
 };
 
+/**
+ * 指定された座標にある駒をうごかせるかどうかをかえす
+ */
+const isMoveablePiece = (state: RawRithoState) => (coord: Coord) => {
+  const piece = state.pieceGrid.get(coord);
+  if (!piece || piece.color !== state.turn) return false;
+
+  const prevAction = state.prevActions[0];
+  // NOTE: 同じ駒は連続で動かすことができない
+  return !(
+    prevAction &&
+    prevAction.type === "MovePiece" &&
+    sameCoord(prevAction.to, coord)
+  );
+};
+
 const isValidMovePieceAction = (
   state: RawRithoState,
   action: MovePieceAction
@@ -28,20 +45,11 @@ const isValidMovePieceAction = (
   // NOTE: タイルを置いている途中の場合は駒を動かせない
   if (state.currentActions.length > 0) return false;
 
-  // NOTE: そのターンの色の駒しか動かせない
-  const fromPiece = state.pieceGrid.get(from);
-  if (!fromPiece || fromPiece.color !== state.turn) return false;
+  // NOTE: そのターンの色の駒でまだ動かしていない駒しか動かせない
+  if (!isMoveablePiece(state)(from)) return false;
 
   // NOTE: 目的の場所までの経路が存在しない場合は駒を動かせない
-  if (!state.pieceGrid.canMovePiece(state.tileGrid, from, to)) return false;
-
-  // NOTE: 同じ駒は連続で動かすことができない
-  const prevAction = state.prevActions[0];
-  return !(
-    prevAction &&
-    prevAction.type === "MovePiece" &&
-    sameCoord(prevAction.to, from)
-  );
+  return state.pieceGrid.canMovePiece(state.tileGrid, from, to);
 };
 
 const isValidAction =
@@ -144,4 +152,5 @@ export const build = (state: RawRithoState): Ritho => ({
   ...state,
   action: doAction(state),
   isValidAction: isValidAction(state),
+  isMoveablePiece: isMoveablePiece(state),
 });

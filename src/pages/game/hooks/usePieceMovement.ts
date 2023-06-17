@@ -1,53 +1,63 @@
 import { MouseEvent, TouchEvent, useCallback, useState } from "react";
-import { Coord } from "@/types/ritho";
-import { PieceGrid } from "@/lib/ritho/pieceGrid";
+import { Coord, PieceColor } from "@/types/ritho";
+import { Ritho } from "@/lib/ritho/system/types";
+import { sameCoord } from "@/utils/coord";
 
 type Props = {
-  pieceGrid: PieceGrid;
-  onMovePiece: (from: Coord, to: Coord) => Promise<void>;
+  currentPlayerColor?: PieceColor;
+  ritho: Ritho;
+  onMovePiece: (from: Coord, to: Coord) => void;
 };
 
 export const usePieceMovement = (props: Props) => {
+  const { pieceGrid, tileGrid, turn } = props.ritho;
+  const isCurrentPlayerTurn = props.currentPlayerColor === turn;
   const [from, setFrom] = useState<Coord>();
+  const [moveableCoords, setMoveableCoords] = useState<Coord[]>([]);
 
-  const handleDragStart = useCallback((coord: Coord) => {
-    setFrom(coord);
-  }, []);
+  const handleSelectFrom = useCallback(
+    (coord: Coord) => {
+      if (!isCurrentPlayerTurn) return;
+      if (!props.ritho.isMoveablePiece(coord)) return;
 
-  const handleDrop = useCallback(
+      setFrom(coord);
+      setMoveableCoords(pieceGrid.getMoveablePieceCoords(tileGrid, coord));
+    },
+    [props.ritho, isCurrentPlayerTurn, pieceGrid, tileGrid]
+  );
+
+  const handleSelectTo = useCallback(
     (to: Coord) => {
+      if (!isCurrentPlayerTurn) return;
       if (!from) return;
 
-      props.onMovePiece(from, to).then(() => {
-        setFrom(undefined);
-      });
+      props.onMovePiece(from, to);
+      setMoveableCoords([]);
+      setFrom(undefined);
     },
-    [from, props]
+    [from, isCurrentPlayerTurn, props]
   );
 
   const handleClickOrTouch = useCallback(
     (event: MouseEvent | TouchEvent, coord: Coord) => {
       event.preventDefault();
 
-      if (from) {
-        props
-          .onMovePiece(from, coord)
-          .then(() => {
-            setFrom(undefined);
-          })
-          .catch(() => {
-            // NOTE: 正しく動かせなかった時はfromはそのまま残す
-          });
+      if (from && sameCoord(from, coord)) {
+        setMoveableCoords([]);
+        setFrom(undefined);
+      } else if (from) {
+        handleSelectTo(coord);
       } else {
-        setFrom(coord);
+        handleSelectFrom(coord);
       }
     },
-    [from, props]
+    [from, handleSelectFrom, handleSelectTo]
   );
 
   return {
-    onDragStart: handleDragStart,
-    onDrop: handleDrop,
+    moveableCoords,
+    onDragStart: handleSelectFrom,
+    onDrop: handleSelectTo,
     onClick: handleClickOrTouch,
     onTouch: handleClickOrTouch,
   };

@@ -19,7 +19,7 @@ type Props = {
   size: number;
   type: PieceType;
   color: PieceColor;
-  canMove?: boolean;
+  moveable?: boolean;
   onDragStart?: () => void;
   onClick: (event: MouseEvent) => void;
   onTouch: (event: TouchEvent) => void;
@@ -33,9 +33,9 @@ export const Piece = (props: Props) => {
         props.onDragStart?.();
         return {};
       },
-      canDrag: props.canMove,
+      canDrag: props.moveable,
     }),
-    [props.canMove, props.onDragStart]
+    [props.moveable, props.onDragStart]
   );
 
   return (
@@ -47,7 +47,7 @@ export const Piece = (props: Props) => {
       borderRadius="4px"
       alignItems="center"
       justifyContent="center"
-      cursor={props.canMove ? "pointer" : "default"}
+      cursor={props.moveable ? "pointer" : "default"}
       display="flex"
       boxShadow="md"
       onClick={props.onClick}

@@ -13,6 +13,7 @@ type Props = {
   moveableColor?: PieceColor;
   reverse?: boolean;
   style?: StyleProps;
+  moveableCoords?: Coord[];
   onDragStart: (from: Coord) => void;
   onDrop: (to: Coord) => void;
   onClick: (event: MouseEvent, coord: Coord) => void;
@@ -20,6 +21,19 @@ type Props = {
 };
 
 export const Board = (props: Props) => {
+  const moveableCoordsMap = useMemo(
+    () =>
+      (props.moveableCoords ?? []).reduce<
+        Record<number, Record<number, boolean>>
+      >(
+        (acc, c) => ({
+          ...acc,
+          [c.y]: { ...acc[c.y], [c.x]: true },
+        }),
+        {}
+      ),
+    [props.moveableCoords]
+  );
   const ref = useRef<HTMLDivElement>(null);
   const cells = useMemo(
     () => (props.reverse ? reversed(props.cells).map(reversed) : props.cells),
@@ -48,13 +62,14 @@ export const Board = (props: Props) => {
             onDrop={() => props.onDrop(cell.coord)}
             onClick={(event) => props.onClick(event, cell.coord)}
             onTouch={(event) => props.onTouch(event, cell.coord)}
+            moveable={moveableCoordsMap[cell.coord.y]?.[cell.coord.x]}
           >
             {hasPiece(cell) && (
               <Piece
                 size={pieceSize}
                 type={cell.piece.type}
                 color={cell.piece.color}
-                canMove={props.moveableColor === cell.piece.color}
+                moveable={props.moveableColor === cell.piece.color}
                 onDragStart={() => props.onDragStart(cell.coord)}
                 onClick={(event) => props.onClick(event, cell.coord)}
                 onTouch={(event) => props.onTouch(event, cell.coord)}

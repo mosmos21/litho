@@ -25,12 +25,13 @@ export const GamePage = () => {
     onPlaceTile,
   } = useGame();
   const pieceMovement = usePieceMovement({
+    currentPlayerColor,
+    ritho,
     onMovePiece,
-    pieceGrid: ritho.pieceGrid,
   });
   const tileMovement = useTileMovement({
-    onPlaceTile,
     tileGrid: ritho.tileGrid,
+    onPlaceTile,
   });
   const [boardSize, firstColumnRef] = useElementSize(BOARD_MAX_SIZE);
   const [tileGridSize, secondColumnRef] = useElementSize(TILE_GRID_MAX_SIZE);
@@ -57,16 +58,12 @@ export const GamePage = () => {
             reverse={currentPlayerColor === "White"}
             size={tileGridSize}
             cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
-            onDrop={tileMovement.onDrop}
-            onClick={tileMovement.onClickTileGridCell}
-            onTouch={tileMovement.onTouchTileGridCell}
+            onSelectCell={tileMovement.onSelectTileGridCell}
           />
           <TileStorage
             moveable={moveableTile}
             tileCount={ritho.restTileCount}
-            onDragTile={tileMovement.onDragStart}
-            onClickTile={tileMovement.onClickTile}
-            onTouchTile={tileMovement.onTouchTile}
+            onSelectTile={tileMovement.onSelectTile}
             style={{ width: "100%" }}
           />
         </Column>

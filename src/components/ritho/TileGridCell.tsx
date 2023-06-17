@@ -6,17 +6,15 @@ import { ItemType } from "@/utils/reactDnd.ts";
 type Props = {
   children: ReactNode;
   size: number;
-  onDrop?: () => void;
-  onClick?: () => void;
-  onTouch?: () => void;
+  onSelect?: () => void;
 };
 export const TileGridCell = (props: Props) => {
   const [_, dropRef] = useDrop(
     () => ({
       accept: ItemType.TILE,
-      drop: props.onDrop,
+      drop: props.onSelect,
     }),
-    [props.onDrop]
+    [props.onSelect]
   );
 
   return (
@@ -31,8 +29,8 @@ export const TileGridCell = (props: Props) => {
       _hover={{
         bg: "gray.200",
       }}
-      onClick={props.onClick}
-      onTouchEnd={props.onTouch}
+      onClick={props.onSelect}
+      onTouchEnd={props.onSelect}
     >
       {props.children}
     </GridItem>

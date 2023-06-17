@@ -3,6 +3,7 @@ import { numbers } from "@/utils/array";
 import { BOARD_CELL_COUNT, INITIAL_PIECE_PLACEMENTS } from "@/constants/ritho";
 import { TileGrid } from "@/lib/ritho/tileGrid.ts";
 import { Grid } from "@/lib/ritho/grid";
+import { sameCoord } from "@/utils/coord.ts";
 
 /**
  * 盤面の駒の配置を管理する
@@ -12,23 +13,17 @@ type RawPieceGrid = Grid<Piece>;
 /**
  * 駒の配置を操作するための関数群
  */
-export type PieceGrid = {
-  hasPiece: (coord: Coord) => boolean;
-  get: (coord: Coord) => Piece | undefined;
-  set: (coord: Coord, piece?: Piece) => PieceGrid;
-  canMovePiece: (tileGrid: TileGrid, from: Coord, to: Coord) => boolean;
-  move: (from: Coord, to: Coord) => PieceGrid;
-  toArray: () => PieceCell[][];
-};
-
-const build = (grid: RawPieceGrid): PieceGrid => ({
+const build = (grid: RawPieceGrid) => ({
   hasPiece: hasPiece(grid),
   get: get(grid),
   set: set(grid),
+  getMoveablePieceCoords: getMoveablePieceCoords(grid),
   canMovePiece: canMovePiece(grid),
   move: move(grid),
   toArray: toArray(grid),
 });
+
+export type PieceGrid = ReturnType<typeof build>;
 
 /**
  * 盤面から駒を取得する
@@ -60,20 +55,20 @@ const move = (grid: RawPieceGrid) => (from: Coord, to: Coord) =>
   set(grid)(to, get(grid)(from)).set(from, undefined);
 
 /**
- * 指定された座標から座標まで駒が移動可能かどうかを返す
+ * 指定された駒から移動可能な座標を返す
  */
-export const canMovePiece =
-  (grid: RawPieceGrid) => (tileGrid: TileGrid, from: Coord, to: Coord) => {
+export const getMoveablePieceCoords =
+  (grid: RawPieceGrid) => (tileGrid: TileGrid, from: Coord) => {
     const piece = get(grid)(from);
-    if (!piece) return false;
+    if (!piece) return [];
 
+    const moveableCoords: Coord[] = [];
     const visitedTileCoords: Grid<boolean> = {};
     const queue: Coord[] = [{ x: 0, y: 0 }];
     while (queue.length) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const coord = queue.shift()!;
       const pieceCoord = { x: from.x + coord.x, y: from.y + coord.y };
-      if (pieceCoord.x === to.x && pieceCoord.y === to.y) return true;
 
       visitedTileCoords[coord.y] ??= {};
       visitedTileCoords[coord.y][coord.x] = true;
@@ -91,22 +86,34 @@ export const canMovePiece =
           x: coord.x + direction.x,
           y: coord.y + direction.y,
         };
-        const nextCoordPiece = get(grid)({
+        const nextPieceCoord = {
           x: from.x + nextTileCoord.x,
           y: from.y + nextTileCoord.y,
-        });
+        };
+        const nextCoordPiece = get(grid)(nextPieceCoord);
 
         // NOTE: まだ行ったことのない方向で自分の駒が置いてなければ遷移可能
         if (
           !visitedTileCoords[nextTileCoord.y]?.[nextTileCoord.x] &&
           nextCoordPiece?.color !== piece.color
         ) {
+          moveableCoords.push(nextPieceCoord);
           queue.push(nextTileCoord);
         }
       });
     }
 
-    return false;
+    return moveableCoords;
+  };
+
+/**
+ * 指定された座標から座標まで駒が移動可能かどうかを返す
+ */
+export const canMovePiece =
+  (grid: RawPieceGrid) => (tileGrid: TileGrid, from: Coord, to: Coord) => {
+    return getMoveablePieceCoords(grid)(tileGrid, from).some((coord) =>
+      sameCoord(coord, to)
+    );
   };
 
 /**

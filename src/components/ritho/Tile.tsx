@@ -9,9 +9,7 @@ type Props = {
   size: number;
   type: TileType;
   moveable?: boolean;
-  onDragStart?: () => void;
-  onClick?: () => void;
-  onTouch?: () => void;
+  onSelect?: () => void;
   style?: StyleProps;
 };
 
@@ -21,12 +19,12 @@ export const Tile = (props: Props) => {
     () => ({
       type: ItemType.TILE,
       item: () => {
-        props.onDragStart?.();
+        props.onSelect?.();
         return {};
       },
       canDrag: props.moveable,
     }),
-    [props.moveable, props.onDragStart]
+    [props.moveable, props.onSelect]
   );
 
   return (
@@ -40,8 +38,8 @@ export const Tile = (props: Props) => {
       overflow="hidden"
       cursor={props.moveable ? "pointer" : "default"}
       boxShadow="lg"
-      onClick={props.onClick}
-      onTouchEnd={props.onTouch}
+      onClick={props.onSelect}
+      onTouchEnd={props.onSelect}
       {...props.style}
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />
