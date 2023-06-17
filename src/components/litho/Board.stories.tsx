@@ -1,6 +1,6 @@
-import { buildPieceGrid } from "@/lib/ritho/pieceGrid";
+import { buildPieceGrid } from "@/lib/litho/pieceGrid";
 import { BOARD_MAX_SIZE } from "@/constants";
-import { Board } from "@/components/ritho/Board";
+import { Board } from "@/components/litho/Board";
 import { Meta, StoryObj } from "@storybook/react";
 
 export default {

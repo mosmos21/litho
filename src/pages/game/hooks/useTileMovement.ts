@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { Coord, PlaceableTile } from "@/types/ritho";
-import { TileGrid } from "@/lib/ritho/tileGrid";
+import { Coord, PlaceableTile } from "@/types/litho";
+import { TileGrid } from "@/lib/litho/tileGrid";
 
 type Props = {
   tileGrid: TileGrid;

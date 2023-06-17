@@ -36,7 +36,7 @@ export const TopPage = () => {
         borderColor="blackAlpha.700"
       >
         <_Flex height="100%" gap="60px">
-          <Text fontSize="6xl">Ritho</Text>
+          <Text fontSize="6xl">Litho</Text>
           <_Flex gap="20px" width="300px">
             <InnerBox>
               <Motion {...getMenuMotionProps()}>

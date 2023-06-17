@@ -4,7 +4,7 @@ import {
   TilePlacement,
   PlaceableTile,
   TileType,
-} from "@/types/ritho";
+} from "@/types/litho";
 
 export const FIRST_TURN_COLOR: PieceColor = "Black";
 

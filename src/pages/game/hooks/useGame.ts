@@ -13,16 +13,16 @@ export const useGame = () => {
 
   // NOTE: ゲームの進行の管理
   const gameProgression = useGameProgression(game);
-  const { ritho, currentPlayerColor } = gameProgression;
+  const { litho, currentPlayerColor } = gameProgression;
 
   // NOTE: ゲームの終了の管理
-  useGameConclusion(game, ritho);
+  useGameConclusion(game, litho);
 
   return {
     game,
     moveablePieceColor:
-      ritho.turn === currentPlayerColor ? currentPlayerColor : undefined,
-    moveableTile: ritho.turn === currentPlayerColor,
+      litho.turn === currentPlayerColor ? currentPlayerColor : undefined,
+    moveableTile: litho.turn === currentPlayerColor,
     ...gameProgression,
   };
 };

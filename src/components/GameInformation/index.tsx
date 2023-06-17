@@ -2,7 +2,7 @@ import { WaitingGameInformation } from "@/components/GameInformation/WaitingGame
 import { OngoingGameInformation } from "@/components/GameInformation/OngoingGameInformation";
 import { FinishedGameInformation } from "@/components/GameInformation/FinishedGameInformation";
 import { Game } from "@/lib/firebase/schema";
-import { PieceColor } from "@/types/ritho.ts";
+import { PieceColor } from "@/types/litho.ts";
 import { StyleProps } from "@chakra-ui/react";
 
 type Props = {

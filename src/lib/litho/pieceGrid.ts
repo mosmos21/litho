@@ -1,8 +1,8 @@
-import { Piece, Coord, PieceCell } from "@/types/ritho";
+import { Piece, Coord, PieceCell } from "@/types/litho";
 import { numbers } from "@/utils/array";
-import { BOARD_CELL_COUNT, INITIAL_PIECE_PLACEMENTS } from "@/constants/ritho";
-import { TileGrid } from "@/lib/ritho/tileGrid.ts";
-import { Grid } from "@/lib/ritho/grid";
+import { BOARD_CELL_COUNT, INITIAL_PIECE_PLACEMENTS } from "@/constants/litho";
+import { TileGrid } from "@/lib/litho/tileGrid.ts";
+import { Grid } from "@/lib/litho/grid";
 import { sameCoord } from "@/utils/coord.ts";
 
 /**

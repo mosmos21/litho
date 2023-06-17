@@ -1,4 +1,4 @@
-import { Tile } from "@/components/ritho/Tile";
+import { Tile } from "@/components/litho/Tile";
 import { Meta, StoryObj } from "@storybook/react";
 
 export default {

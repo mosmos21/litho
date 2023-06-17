@@ -3,8 +3,8 @@ import {
   PiecePlacement,
   TileCell,
   TilePlacement,
-} from "@/types/ritho";
-import { BOARD_CELL_COUNT } from "@/constants/ritho";
+} from "@/types/litho";
+import { BOARD_CELL_COUNT } from "@/constants/litho";
 import { BOARD_BORDER_WIDTH } from "@/constants";
 
 /**

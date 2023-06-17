@@ -4,13 +4,13 @@ import {
   PieceColor,
   PlaceTileAction,
   Coord,
-} from "@/types/ritho";
-import { Ritho, RawRithoState } from "@/lib/ritho/system/types";
-import { INITIAL_ACTION_COUNT } from "@/constants/ritho";
+} from "@/types/litho";
+import { Litho, RawLithoState } from "@/lib/litho/system/types";
+import { INITIAL_ACTION_COUNT } from "@/constants/litho";
 import { sameCoord } from "@/utils/coord";
 
 const isValidPlaceTileAction = (
-  state: RawRithoState,
+  state: RawLithoState,
   { coord }: PlaceTileAction
 ) => {
   if (state.tileGrid.hasTile(coord)) return false;
@@ -22,7 +22,7 @@ const isValidPlaceTileAction = (
 /**
  * 指定された座標にある駒をうごかせるかどうかをかえす
  */
-const isMoveablePiece = (state: RawRithoState) => (coord: Coord) => {
+const isMoveablePiece = (state: RawLithoState) => (coord: Coord) => {
   const piece = state.pieceGrid.get(coord);
   if (!piece || piece.color !== state.turn) return false;
 
@@ -36,7 +36,7 @@ const isMoveablePiece = (state: RawRithoState) => (coord: Coord) => {
 };
 
 const isValidMovePieceAction = (
-  state: RawRithoState,
+  state: RawLithoState,
   action: MovePieceAction
 ) => {
   const { from, to } = action;
@@ -53,7 +53,7 @@ const isValidMovePieceAction = (
 };
 
 const isValidAction =
-  (state: RawRithoState) =>
+  (state: RawLithoState) =>
   (action: Action): boolean => {
     switch (action.type) {
       case "PlaceTile":
@@ -75,15 +75,15 @@ const nextTurn = (current: PieceColor) =>
 const consumeActionCount = (
   turn: PieceColor,
   count: number
-): Pick<RawRithoState, "turn" | "restActionCount"> =>
+): Pick<RawLithoState, "turn" | "restActionCount"> =>
   count === 1
     ? { turn: nextTurn(turn), restActionCount: INITIAL_ACTION_COUNT }
     : { turn, restActionCount: count - 1 };
 
 const placeTileAction = (
-  state: RawRithoState,
+  state: RawLithoState,
   action: PlaceTileAction
-): RawRithoState => {
+): RawLithoState => {
   if (!isValidPlaceTileAction(state, action)) return state;
   const { coord, tile } = action;
 
@@ -113,9 +113,9 @@ const placeTileAction = (
 };
 
 const movePieceAction = (
-  state: RawRithoState,
+  state: RawLithoState,
   action: MovePieceAction
-): RawRithoState => {
+): RawLithoState => {
   if (!isValidMovePieceAction(state, action)) return state;
 
   const { from, to } = action;
@@ -137,8 +137,8 @@ const movePieceAction = (
 };
 
 const doAction =
-  (state: RawRithoState) =>
-  (action: Action): Ritho => {
+  (state: RawLithoState) =>
+  (action: Action): Litho => {
     switch (action.type) {
       case "PlaceTile":
         return build(placeTileAction(state, action));
@@ -148,7 +148,7 @@ const doAction =
     return build(state);
   };
 
-export const build = (state: RawRithoState): Ritho => ({
+export const build = (state: RawLithoState): Litho => ({
   ...state,
   action: doAction(state),
   isValidAction: isValidAction(state),

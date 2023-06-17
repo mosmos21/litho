@@ -1,9 +1,9 @@
-import { Coord, PieceCell, PieceColor } from "@/types/ritho";
-import { Piece } from "@/components/ritho/Piece";
-import { BOARD_CELL_COUNT } from "@/constants/ritho";
-import { calcCellSize, calcPieceSize, hasPiece } from "@/utils/ritho";
+import { Coord, PieceCell, PieceColor } from "@/types/litho";
+import { Piece } from "@/components/litho/Piece";
+import { BOARD_CELL_COUNT } from "@/constants/litho";
+import { calcCellSize, calcPieceSize, hasPiece } from "@/utils/litho";
 import { useRef, useMemo, MouseEvent, TouchEvent } from "react";
-import { BoardCell } from "@/components/ritho/BoardCell";
+import { BoardCell } from "@/components/litho/BoardCell";
 import { Grid, StyleProps } from "@chakra-ui/react";
 import { reversed } from "@/utils/array";
 

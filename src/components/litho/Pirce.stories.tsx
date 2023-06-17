@@ -1,4 +1,4 @@
-import { Piece } from "@/components/ritho/Piece.tsx";
+import { Piece } from "@/components/litho/Piece.tsx";
 import { Meta, StoryObj } from "@storybook/react";
 
 export default {

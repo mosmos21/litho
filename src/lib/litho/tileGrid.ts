@@ -1,11 +1,11 @@
-import { TileType, Coord, TileCell } from "@/types/ritho";
+import { TileType, Coord, TileCell } from "@/types/litho";
 import { range } from "@/utils/array";
 import {
   DIAGONAL_TILE,
   INITIAL_TILE_PLACEMENTS,
   VERTICAL_AND_HORIZONTAL_TILE,
-} from "@/constants/ritho.ts";
-import { Grid } from "@/lib/ritho/grid";
+} from "@/constants/litho.ts";
+import { Grid } from "@/lib/litho/grid";
 import { sameCoord } from "@/utils/coord.ts";
 
 /**

@@ -1,8 +1,8 @@
 import { Grid } from "@chakra-ui/react";
-import { Coord, TileCell } from "@/types/ritho";
-import { Tile } from "@/components/ritho/Tile";
-import { hasTile } from "@/utils/ritho.ts";
-import { TileGridCell } from "@/components/ritho/TileGridCell";
+import { Coord, TileCell } from "@/types/litho";
+import { Tile } from "@/components/litho/Tile";
+import { hasTile } from "@/utils/litho.ts";
+import { TileGridCell } from "@/components/litho/TileGridCell";
 import { useMemo } from "react";
 import { reversed } from "@/utils/array";
 

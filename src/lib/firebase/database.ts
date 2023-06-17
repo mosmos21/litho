@@ -34,7 +34,7 @@ const _onValue =
 const getProductionDB = (app: FirebaseApp) =>
   getDatabase(
     app,
-    " https://ritho-ae2e3-default-rtdb.asia-southeast1.firebasedatabase.app"
+    "https://litho-e9507-default-rtdb.asia-southeast1.firebasedatabase.app/"
   );
 
 const getLocalDB = () => {

@@ -1,7 +1,7 @@
 import { Flex, StyleProps, Text } from "@chakra-ui/react";
-import { PieceColor } from "@/types/ritho.ts";
+import { PieceColor } from "@/types/litho.ts";
 import { Player } from "@/lib/firebase/schema.ts";
-import { Piece } from "@/components/ritho/Piece.tsx";
+import { Piece } from "@/components/litho/Piece.tsx";
 
 type Props = {
   currentTurnColor: PieceColor;
