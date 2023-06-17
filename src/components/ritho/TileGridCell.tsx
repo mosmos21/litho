@@ -6,7 +6,9 @@ import { ItemType } from "@/utils/reactDnd.ts";
 type Props = {
   children: ReactNode;
   size: number;
-  onDrop: () => void;
+  onDrop?: () => void;
+  onClick?: () => void;
+  onTouch?: () => void;
 };
 export const TileGridCell = (props: Props) => {
   const [_, dropRef] = useDrop(
@@ -29,6 +31,8 @@ export const TileGridCell = (props: Props) => {
       _hover={{
         bg: "gray.200",
       }}
+      onClick={props.onClick}
+      onTouchEnd={props.onTouch}
     >
       {props.children}
     </GridItem>

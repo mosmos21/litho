@@ -10,6 +10,8 @@ type Props = {
   type: TileType;
   moveable?: boolean;
   onDragStart?: () => void;
+  onClick?: () => void;
+  onTouch?: () => void;
   style?: StyleProps;
 };
 
@@ -38,6 +40,8 @@ export const Tile = (props: Props) => {
       overflow="hidden"
       cursor={props.moveable ? "pointer" : "default"}
       boxShadow="lg"
+      onClick={props.onClick}
+      onTouchEnd={props.onTouch}
       {...props.style}
     >
       <Circle width={`${circleSize}px`} height={`${circleSize}px`} />

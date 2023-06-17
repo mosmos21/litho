@@ -8,11 +8,11 @@ import {
 import { BasicLayout } from "@/layouts/BasicLayout";
 import { chakra, Flex } from "@chakra-ui/react";
 import { TileStorage } from "@/components/TileStorage";
-import { usePieceDnd } from "@/hooks/usePieceDnd";
-import { useTileDnd } from "@/hooks/useTileDnd";
+import { usePieceMovement } from "@/pages/game/hooks/usePieceMovement.ts";
+import { useTileMovement } from "@/pages/game/hooks/useTileMovement.ts";
 import { useGame } from "@/pages/game/hooks/useGame";
 import { GameInformation } from "@/components/GameInformation";
-import { useElementSize } from "@/pages/game/hooks/useElementSize.ts";
+import { useElementSize } from "@/pages/game/hooks/useElementSize";
 
 export const GamePage = () => {
   const {
@@ -24,8 +24,14 @@ export const GamePage = () => {
     onMovePiece,
     onPlaceTile,
   } = useGame();
-  const pieceDnd = usePieceDnd({ onMovePiece });
-  const tileDnd = useTileDnd({ onPlaceTile });
+  const pieceMovement = usePieceMovement({
+    onMovePiece,
+    pieceGrid: ritho.pieceGrid,
+  });
+  const tileMovement = useTileMovement({
+    onPlaceTile,
+    tileGrid: ritho.tileGrid,
+  });
   const [boardSize, firstColumnRef] = useElementSize(BOARD_MAX_SIZE);
   const [tileGridSize, secondColumnRef] = useElementSize(TILE_GRID_MAX_SIZE);
 
@@ -43,7 +49,7 @@ export const GamePage = () => {
             size={boardSize}
             cells={ritho.pieceGrid.toArray()}
             moveableColor={moveablePieceColor}
-            {...pieceDnd}
+            {...pieceMovement}
           />
         </Column>
         <Column ref={secondColumnRef} justifyContent="center">
@@ -51,12 +57,16 @@ export const GamePage = () => {
             reverse={currentPlayerColor === "White"}
             size={tileGridSize}
             cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
-            onDrop={tileDnd.onDrop}
+            onDrop={tileMovement.onDrop}
+            onClick={tileMovement.onClickTileGridCell}
+            onTouch={tileMovement.onTouchTileGridCell}
           />
           <TileStorage
             moveable={moveableTile}
             tileCount={ritho.restTileCount}
-            onDragTile={tileDnd.onDragStart}
+            onDragTile={tileMovement.onDragStart}
+            onClickTile={tileMovement.onClickTile}
+            onTouchTile={tileMovement.onTouchTile}
             style={{ width: "100%" }}
           />
         </Column>

@@ -10,7 +10,9 @@ type Props = {
   reverse?: boolean;
   size: number;
   cells: TileCell[][];
-  onDrop: (coord: Coord) => void;
+  onDrop?: (coord: Coord) => void;
+  onClick?: (coord: Coord) => void;
+  onTouch?: (coord: Coord) => void;
 };
 
 export const TileGrid = (props: Props) => {
@@ -37,7 +39,9 @@ export const TileGrid = (props: Props) => {
           <TileGridCell
             key={`${y}-${x}`}
             size={cellSize}
-            onDrop={() => props.onDrop(cell.coord)}
+            onDrop={() => props.onDrop?.(cell.coord)}
+            onClick={() => props.onClick?.(cell.coord)}
+            onTouch={() => props.onTouch?.(cell.coord)}
           >
             {hasTile(cell) && <Tile size={cellSize} type={cell.tile} />}
           </TileGridCell>
