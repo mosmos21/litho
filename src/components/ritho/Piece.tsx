@@ -21,8 +21,8 @@ type Props = {
   color: PieceColor;
   moveable?: boolean;
   onDragStart?: () => void;
-  onClick: (event: MouseEvent) => void;
-  onTouch: (event: TouchEvent) => void;
+  onClick?: (event: MouseEvent) => void;
+  onTouch?: (event: TouchEvent) => void;
 };
 
 export const Piece = (props: Props) => {
