@@ -16,7 +16,7 @@ export const TILE_GRID_MAX_SIZE = 450;
 /**
  * 石板タイル配置エリアの余白セル数
  */
-export const TILE_GRID_BORDER_BORDER_CELL_COUNT = 1;
+export const TILE_GRID_BORDER_CELL_COUNT = 1;
 
 /**
  * roomIdの長さ

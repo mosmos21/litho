@@ -1,6 +1,10 @@
 import { Board } from "@/components/ritho/Board";
 import { TileGrid } from "@/components/ritho/TileGrid";
-import { BOARD_MAX_SIZE, TILE_GRID_MAX_SIZE } from "@/constants";
+import {
+  BOARD_MAX_SIZE,
+  TILE_GRID_BORDER_CELL_COUNT,
+  TILE_GRID_MAX_SIZE,
+} from "@/constants";
 import { BasicLayout } from "@/layouts/BasicLayout";
 import { chakra, Flex } from "@chakra-ui/react";
 import { TileStorage } from "@/components/TileStorage";
@@ -37,7 +41,7 @@ export const GamePage = () => {
           <Board
             reverse={currentPlayerColor === "White"}
             size={boardSize}
-            cells={ritho.pieceCell}
+            cells={ritho.pieceGrid.toArray()}
             moveableColor={moveablePieceColor}
             {...pieceDnd}
           />
@@ -46,7 +50,7 @@ export const GamePage = () => {
           <TileGrid
             reverse={currentPlayerColor === "White"}
             size={tileGridSize}
-            cells={ritho.tileCell}
+            cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
             onDrop={tileDnd.onDrop}
           />
           <TileStorage

@@ -1,11 +1,5 @@
 import { TileGrid } from "@/lib/ritho/tileGrid";
-import {
-  Action,
-  PieceCell,
-  PieceColor,
-  TileCell,
-  TileCount,
-} from "@/types/ritho";
+import { Action, PieceColor, TileCount } from "@/types/ritho";
 import { PieceGrid } from "@/lib/ritho/pieceGrid";
 
 export type RawRithoState = {
@@ -19,20 +13,7 @@ export type RawRithoState = {
   tileGrid: TileGrid;
 };
 
-export type RithoState = Readonly<
-  Pick<
-    RawRithoState,
-    | "turn"
-    | "restActionCount"
-    | "restTileCount"
-    | "winner"
-    | "currentActions"
-    | "prevActions"
-  > & {
-    pieceCell: PieceCell[][];
-    tileCell: TileCell[][];
-  }
->;
+export type RithoState = Readonly<RawRithoState>;
 
 export type Ritho = RithoState & {
   action: (action: Action) => Ritho;

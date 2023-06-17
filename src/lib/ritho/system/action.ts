@@ -6,7 +6,6 @@ import {
 } from "@/types/ritho";
 import { Ritho, RawRithoState } from "@/lib/ritho/system/types";
 import { INITIAL_ACTION_COUNT } from "@/constants/ritho";
-import { TILE_GRID_BORDER_BORDER_CELL_COUNT } from "@/constants";
 import { sameCoord } from "@/utils/coord";
 
 const isValidPlaceTileAction = (
@@ -138,14 +137,7 @@ const doAction =
   };
 
 export const build = (state: RawRithoState): Ritho => ({
-  turn: state.turn,
-  restActionCount: state.restActionCount,
-  restTileCount: state.restTileCount,
-  winner: state.winner,
-  pieceCell: state.pieceGrid.toArray(),
-  currentActions: [],
-  prevActions: [],
-  tileCell: state.tileGrid.toArray(TILE_GRID_BORDER_BORDER_CELL_COUNT),
+  ...state,
   action: doAction(state),
   isValidAction: isValidAction(state),
 });
