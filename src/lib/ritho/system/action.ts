@@ -1,8 +1,56 @@
-import { Action, Coord, PieceColor, PlaceableTile } from "@/types/ritho";
+import {
+  Action,
+  MovePieceAction,
+  PieceColor,
+  PlaceTileAction,
+} from "@/types/ritho";
 import { Ritho, RawRithoState } from "@/lib/ritho/system/types";
 import { INITIAL_ACTION_COUNT } from "@/constants/ritho";
 import { TILE_GRID_BORDER_BORDER_CELL_COUNT } from "@/constants";
-import { sameCoord } from "@/utils/coord.ts";
+import { sameCoord } from "@/utils/coord";
+
+const isValidPlaceTileAction = (
+  state: RawRithoState,
+  { coord }: PlaceTileAction
+) => {
+  if (state.tileGrid.hasTile(coord)) return false;
+
+  // NOTE: すでにあるタイルに接していれば動かせる
+  return state.tileGrid.canPlaceTile(coord);
+};
+
+const isValidMovePieceAction = (
+  state: RawRithoState,
+  action: MovePieceAction
+) => {
+  const { from, to } = action;
+  if (sameCoord(from, to)) return false;
+
+  // NOTE: タイルを置いている途中の場合は駒を動かせない
+  if (state.currentActions.length > 0) return false;
+
+  // NOTE: そのターンの色の駒しか動かせない
+  const fromPiece = state.pieceGrid.get(from);
+  if (!fromPiece || fromPiece.color !== state.turn) return false;
+
+  // NOTE: 目的の場所までの経路が存在しない場合は駒を動かせない
+  if (!state.pieceGrid.canMovePiece(state.tileGrid, from, to)) return false;
+
+  // NOTE: 同じ駒は連続で動かすことができない
+  const prevAction = state.prevActions[0];
+  return !(prevAction.type === "MovePiece" && sameCoord(prevAction.to, from));
+};
+
+const isValidAction =
+  (state: RawRithoState) =>
+  (action: Action): boolean => {
+    switch (action.type) {
+      case "PlaceTile":
+        return isValidPlaceTileAction(state, action);
+      case "MovePiece":
+        return isValidMovePieceAction(state, action);
+    }
+  };
 
 /**
  * 次のターンのプレイヤーを返す
@@ -23,15 +71,10 @@ const consumeActionCount = (
 
 const placeTileAction = (
   state: RawRithoState,
-  tile: PlaceableTile,
-  coord: Coord
+  action: PlaceTileAction
 ): RawRithoState => {
-  if (state.tileGrid.hasTile(coord)) {
-    return state;
-  }
-  if (!state.tileGrid.canPlaceTile(coord)) {
-    return state;
-  }
+  if (!isValidPlaceTileAction(state, action)) return state;
+  const { coord, tile } = action;
 
   let nextState = {
     ...state,
@@ -45,16 +88,13 @@ const placeTileAction = (
   // NOTE: 一枚目のタイルを置く時は今のアクションを継続するので記録だけ残す
   // すでにタイルを置いているアクションの時はアクションを消費する
   if (state.currentActions.length === 0) {
-    nextState.currentActions = [{ type: "PlaceTile", tile, coord }];
+    nextState.currentActions = [action];
   } else {
     nextState = {
       ...nextState,
       ...consumeActionCount(state.turn, state.restActionCount),
       currentActions: [],
-      prevActions: [
-        ...state.currentActions,
-        { type: "PlaceTile", tile, coord },
-      ],
+      prevActions: [...state.currentActions, action],
     };
   }
 
@@ -63,32 +103,21 @@ const placeTileAction = (
 
 const movePieceAction = (
   state: RawRithoState,
-  from: Coord,
-  to: Coord
+  action: MovePieceAction
 ): RawRithoState => {
-  // NOTE: タイルを置いている途中の場合は駒を動かせない
-  if (state.currentActions.length > 0) return state;
+  if (!isValidMovePieceAction(state, action)) return state;
 
-  if (sameCoord(from, to)) return state;
-  if (!state.pieceGrid.canMovePiece(state.tileGrid, from, to)) return state;
-
-  const fromPiece = state.pieceGrid.get(from);
-  if (!fromPiece || fromPiece.color !== state.turn) return state;
-
-  // NOTE: 同じ駒は連続で動かすことができない
-  const prevAction = state.prevActions[0];
-  if (prevAction.type === "MovePiece" && sameCoord(prevAction.to, from))
-    return state;
+  const { from, to } = action;
+  const toPiece = state.pieceGrid.get(to);
 
   const nextState = {
     ...state,
     ...consumeActionCount(state.turn, state.restActionCount),
     pieceGrid: state.pieceGrid.move(from, to),
     currentActions: [],
-    prevActions: [{ type: "MovePiece", from, to } satisfies Action],
+    prevActions: [action],
   };
 
-  const toPiece = state.pieceGrid.get(to);
   if (toPiece?.type === "King") {
     nextState.winner = state.turn;
   }
@@ -101,9 +130,9 @@ const doAction =
   (action: Action): Ritho => {
     switch (action.type) {
       case "PlaceTile":
-        return build(placeTileAction(state, action.tile, action.coord));
+        return build(placeTileAction(state, action));
       case "MovePiece":
-        return build(movePieceAction(state, action.from, action.to));
+        return build(movePieceAction(state, action));
     }
     return build(state);
   };
@@ -118,4 +147,5 @@ export const build = (state: RawRithoState): Ritho => ({
   prevActions: [],
   tileCell: state.tileGrid.toArray(TILE_GRID_BORDER_BORDER_CELL_COUNT),
   action: doAction(state),
+  isValidAction: isValidAction(state),
 });

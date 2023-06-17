@@ -36,4 +36,5 @@ export type RithoState = Readonly<
 
 export type Ritho = RithoState & {
   action: (action: Action) => Ritho;
+  isValidAction: (action: Action) => boolean;
 };
