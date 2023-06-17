@@ -11,7 +11,7 @@ const CELL_MARGIN = 8;
 type Props = {
   tileCount: TileCount;
   moveable?: boolean;
-  onDragTile: (type: PlaceableTile) => void;
+  onSelectTile?: (tile: PlaceableTile) => void;
   style?: StyleProps;
 };
 
@@ -42,7 +42,7 @@ export const TileStorage = (props: Props) => {
             size={60}
             moveable={props.moveable}
             type="VerticalAndHorizontal"
-            onDragStart={() => props.onDragTile("VerticalAndHorizontal")}
+            onSelect={() => props.onSelectTile?.("VerticalAndHorizontal")}
             style={{
               position: "absolute",
               left: `${
@@ -59,7 +59,7 @@ export const TileStorage = (props: Props) => {
             size={60}
             moveable={props.moveable}
             type="Diagonal"
-            onDragStart={() => props.onDragTile("Diagonal")}
+            onSelect={() => props.onSelectTile?.("Diagonal")}
             style={{
               position: "absolute",
               left: `${i * cellSize["Diagonal"] + CELL_MARGIN * i}px`,

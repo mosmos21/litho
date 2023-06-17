@@ -20,3 +20,12 @@ export const Reverse: Story = {
     reverse: true,
   },
 };
+
+export const WithMoveableCoords: Story = {
+  args: {
+    moveableCoords: [
+      { x: 5, y: 2 },
+      { x: 5, y: 3 },
+    ],
+  },
+};

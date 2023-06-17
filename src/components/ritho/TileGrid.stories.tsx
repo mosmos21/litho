@@ -22,3 +22,13 @@ export const Reverse: Story = {
     reverse: true,
   },
 };
+
+export const WithPlaceable: Story = {
+  args: {
+    placeableCoords: [
+      { x: -1, y: -1 },
+      { x: 0, y: -1 },
+      { x: 1, y: -1 },
+    ],
+  },
+};

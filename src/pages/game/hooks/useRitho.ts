@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Ritho, RithoState } from "@/lib/ritho/system/types";
+import { Ritho, RithoState } from "@/lib/ritho/system/types.ts";
 import { buildRitho } from "@/lib/ritho/system";
 import { Coord, PlaceableTile } from "@/types/ritho.ts";
 

@@ -6,6 +6,7 @@ import {
   VERTICAL_AND_HORIZONTAL_TILE,
 } from "@/constants/ritho.ts";
 import { Grid } from "@/lib/ritho/grid";
+import { sameCoord } from "@/utils/coord.ts";
 
 /**
  * 石板タイルの配置を管理する
@@ -15,23 +16,17 @@ type RawTileGrid = Grid<TileType>;
 /**
  * 石板タイルの配置を操作するための関数群
  */
-export type TileGrid = {
-  hasTile: (coord: Coord) => boolean;
-  get: (coord: Coord) => TileType | undefined;
-  getMoveableDirections: (coord: Coord) => Coord[];
-  set: (coord: Coord, tile: TileType) => TileGrid;
-  toArray: (margin?: number) => TileCell[][];
-  canPlaceTile: (coord: Coord) => boolean;
-};
-
-const build = (grid: RawTileGrid): TileGrid => ({
+const build = (grid: RawTileGrid) => ({
   hasTile: hasTile(grid),
   get: get(grid),
+  getPlaceableCoords: getPlaceableCoords(grid),
   getMoveableDirections: getMoveableDirections(grid),
   set: set(grid),
   toArray: toArray(grid),
   canPlaceTile: canPlaceTile(grid),
 });
+
+export type TileGrid = ReturnType<typeof build>;
 
 /**
  * 座標に対応するタイルを取得する
@@ -57,13 +52,9 @@ const set = (grid: RawTileGrid) => (coord: Coord, tile: TileType) => {
   });
 };
 
-/**
- * 指定した座標にタイルを置くことができるかを返す
- */
-export const canPlaceTile =
-  (grid: RawTileGrid) =>
-  (coord: Coord): boolean => {
-    const around = [
+const getPlaceableCoords = (grid: RawTileGrid) => () => {
+  const around = (coord: Coord) =>
+    [
       { x: -1, y: -1 },
       { x: 0, y: -1 },
       { x: 1, y: -1 },
@@ -72,12 +63,40 @@ export const canPlaceTile =
       { x: -1, y: 1 },
       { x: 0, y: 1 },
       { x: 1, y: 1 },
-    ];
-
-    return around.some(({ x, y }) =>
-      hasTile(grid)({ x: coord.x + x, y: coord.y + y })
+    ].map(({ x, y }) => ({ x: x + coord.x, y: y + coord.y }));
+  const toCoords = (coords: RawTileGrid) =>
+    Object.entries(coords).flatMap(([y, row]) =>
+      Object.keys(row).map<Coord>((x) => ({
+        x: Number(x),
+        y: Number(y),
+      }))
     );
-  };
+
+  const gridCoords = toCoords(grid);
+  const aroundCoords = gridCoords
+    .flatMap(around)
+    .filter((coord) => !hasTile(grid)(coord))
+    .reduce<RawTileGrid>(
+      (acc, coord) => ({
+        ...acc,
+        [coord.y]: {
+          ...acc[coord.y],
+          [coord.x]: true,
+        },
+      }),
+      {}
+    );
+
+  return toCoords(aroundCoords);
+};
+
+/**
+ * 指定した座標にタイルを置くことができるかを返す
+ */
+export const canPlaceTile =
+  (grid: RawTileGrid) =>
+  (coord: Coord): boolean =>
+    getPlaceableCoords(grid)().some((c) => sameCoord(c, coord));
 
 /**
  * タイルが存在する範囲を返す

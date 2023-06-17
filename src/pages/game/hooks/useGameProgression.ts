@@ -8,7 +8,7 @@ import {
   PlaceTileAction,
 } from "@/types/ritho";
 import { useState, useEffect, useCallback } from "react";
-import { useRitho } from "@/hooks/useRitho";
+import { useRitho } from "@/pages/game/hooks/useRitho.ts";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import {
   useGamesGameIdGameRecordsMutation,

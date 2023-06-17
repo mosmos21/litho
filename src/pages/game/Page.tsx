@@ -1,14 +1,18 @@
 import { Board } from "@/components/ritho/Board";
 import { TileGrid } from "@/components/ritho/TileGrid";
-import { BOARD_MAX_SIZE, TILE_GRID_MAX_SIZE } from "@/constants";
+import {
+  BOARD_MAX_SIZE,
+  TILE_GRID_BORDER_CELL_COUNT,
+  TILE_GRID_MAX_SIZE,
+} from "@/constants";
 import { BasicLayout } from "@/layouts/BasicLayout";
 import { chakra, Flex } from "@chakra-ui/react";
 import { TileStorage } from "@/components/TileStorage";
-import { usePieceDnd } from "@/hooks/usePieceDnd";
-import { useTileDnd } from "@/hooks/useTileDnd";
+import { usePieceMovement } from "@/pages/game/hooks/usePieceMovement.ts";
+import { useTileMovement } from "@/pages/game/hooks/useTileMovement.ts";
 import { useGame } from "@/pages/game/hooks/useGame";
 import { GameInformation } from "@/components/GameInformation";
-import { useElementSize } from "@/pages/game/hooks/useElementSize.ts";
+import { useElementSize } from "@/pages/game/hooks/useElementSize";
 
 export const GamePage = () => {
   const {
@@ -20,8 +24,15 @@ export const GamePage = () => {
     onMovePiece,
     onPlaceTile,
   } = useGame();
-  const pieceDnd = usePieceDnd({ onMovePiece });
-  const tileDnd = useTileDnd({ onPlaceTile });
+  const pieceMovement = usePieceMovement({
+    currentPlayerColor,
+    ritho,
+    onMovePiece,
+  });
+  const tileMovement = useTileMovement({
+    tileGrid: ritho.tileGrid,
+    onPlaceTile,
+  });
   const [boardSize, firstColumnRef] = useElementSize(BOARD_MAX_SIZE);
   const [tileGridSize, secondColumnRef] = useElementSize(TILE_GRID_MAX_SIZE);
 
@@ -37,22 +48,23 @@ export const GamePage = () => {
           <Board
             reverse={currentPlayerColor === "White"}
             size={boardSize}
-            cells={ritho.pieceCell}
+            cells={ritho.pieceGrid.toArray()}
             moveableColor={moveablePieceColor}
-            {...pieceDnd}
+            {...pieceMovement}
           />
         </Column>
         <Column ref={secondColumnRef} justifyContent="center">
           <TileGrid
             reverse={currentPlayerColor === "White"}
             size={tileGridSize}
-            cells={ritho.tileCell}
-            onDrop={tileDnd.onDrop}
+            cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
+            onSelectCell={tileMovement.onSelectTileGridCell}
+            placeableCoords={tileMovement.placeableCoords}
           />
           <TileStorage
             moveable={moveableTile}
             tileCount={ritho.restTileCount}
-            onDragTile={tileDnd.onDragStart}
+            onSelectTile={tileMovement.onSelectTile}
             style={{ width: "100%" }}
           />
         </Column>

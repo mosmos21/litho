@@ -2,7 +2,7 @@ import { Coord, PieceCell, PieceColor } from "@/types/ritho";
 import { Piece } from "@/components/ritho/Piece";
 import { BOARD_CELL_COUNT } from "@/constants/ritho";
 import { calcCellSize, calcPieceSize, hasPiece } from "@/utils/ritho";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, MouseEvent, TouchEvent } from "react";
 import { BoardCell } from "@/components/ritho/BoardCell";
 import { Grid, StyleProps } from "@chakra-ui/react";
 import { reversed } from "@/utils/array";
@@ -11,13 +11,29 @@ type Props = {
   size: number;
   cells: PieceCell[][];
   moveableColor?: PieceColor;
-  onDragStart: (from: Coord) => void;
-  onDrop: (to: Coord) => void;
   reverse?: boolean;
   style?: StyleProps;
+  moveableCoords?: Coord[];
+  onDragStart: (from: Coord) => void;
+  onDrop: (to: Coord) => void;
+  onClick: (event: MouseEvent, coord: Coord) => void;
+  onTouch: (event: TouchEvent, coord: Coord) => void;
 };
 
 export const Board = (props: Props) => {
+  const moveableCoordsMap = useMemo(
+    () =>
+      (props.moveableCoords ?? []).reduce<
+        Record<number, Record<number, boolean>>
+      >(
+        (acc, c) => ({
+          ...acc,
+          [c.y]: { ...acc[c.y], [c.x]: true },
+        }),
+        {}
+      ),
+    [props.moveableCoords]
+  );
   const ref = useRef<HTMLDivElement>(null);
   const cells = useMemo(
     () => (props.reverse ? reversed(props.cells).map(reversed) : props.cells),
@@ -44,14 +60,19 @@ export const Board = (props: Props) => {
             key={`${y}-${x}`}
             size={cellSize}
             onDrop={() => props.onDrop(cell.coord)}
+            onClick={(event) => props.onClick(event, cell.coord)}
+            onTouch={(event) => props.onTouch(event, cell.coord)}
+            moveable={moveableCoordsMap[cell.coord.y]?.[cell.coord.x]}
           >
             {hasPiece(cell) && (
               <Piece
                 size={pieceSize}
                 type={cell.piece.type}
                 color={cell.piece.color}
-                canMove={props.moveableColor === cell.piece.color}
+                moveable={props.moveableColor === cell.piece.color}
                 onDragStart={() => props.onDragStart(cell.coord)}
+                onClick={(event) => props.onClick(event, cell.coord)}
+                onTouch={(event) => props.onTouch(event, cell.coord)}
               />
             )}
           </BoardCell>

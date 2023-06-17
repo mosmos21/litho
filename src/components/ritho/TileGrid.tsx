@@ -10,10 +10,24 @@ type Props = {
   reverse?: boolean;
   size: number;
   cells: TileCell[][];
-  onDrop: (coord: Coord) => void;
+  onSelectCell?: (coord: Coord) => void;
+  placeableCoords?: Coord[];
 };
 
 export const TileGrid = (props: Props) => {
+  const placeableCoordsMap = useMemo(
+    () =>
+      (props.placeableCoords ?? []).reduce<
+        Record<number, Record<number, boolean>>
+      >(
+        (acc, c) => ({
+          ...acc,
+          [c.y]: { ...acc[c.y], [c.x]: true },
+        }),
+        {}
+      ),
+    [props.placeableCoords]
+  );
   const cells = useMemo(
     () => (props.reverse ? reversed(props.cells).map(reversed) : props.cells),
     [props.cells, props.reverse]
@@ -37,7 +51,10 @@ export const TileGrid = (props: Props) => {
           <TileGridCell
             key={`${y}-${x}`}
             size={cellSize}
-            onDrop={() => props.onDrop(cell.coord)}
+            onSelect={() =>
+              props.onSelectCell?.({ x: cell.coord.x, y: cell.coord.y })
+            }
+            placeable={placeableCoordsMap[cell.coord.y]?.[cell.coord.x]}
           >
             {hasTile(cell) && <Tile size={cellSize} type={cell.tile} />}
           </TileGridCell>

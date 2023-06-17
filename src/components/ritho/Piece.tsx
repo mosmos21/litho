@@ -3,6 +3,7 @@ import { PieceType, PieceColor } from "@/types/ritho";
 import { FaChessKing } from "react-icons/fa";
 import { useDrag } from "react-dnd";
 import { ItemType } from "@/utils/reactDnd.ts";
+import { TouchEvent, MouseEvent } from "react";
 
 const BACKGROUND: Record<PieceColor, BackgroundProps["bg"]> = {
   Black: "gray.600",
@@ -18,8 +19,10 @@ type Props = {
   size: number;
   type: PieceType;
   color: PieceColor;
-  canMove?: boolean;
+  moveable?: boolean;
   onDragStart?: () => void;
+  onClick?: (event: MouseEvent) => void;
+  onTouch?: (event: TouchEvent) => void;
 };
 
 export const Piece = (props: Props) => {
@@ -30,9 +33,9 @@ export const Piece = (props: Props) => {
         props.onDragStart?.();
         return {};
       },
-      canDrag: props.canMove,
+      canDrag: props.moveable,
     }),
-    [props.canMove, props.onDragStart]
+    [props.moveable, props.onDragStart]
   );
 
   return (
@@ -44,9 +47,11 @@ export const Piece = (props: Props) => {
       borderRadius="4px"
       alignItems="center"
       justifyContent="center"
-      cursor={props.canMove ? "pointer" : "default"}
+      cursor={props.moveable ? "pointer" : "default"}
       display="flex"
       boxShadow="md"
+      onClick={props.onClick}
+      onTouchEnd={props.onTouch}
     >
       {props.type === "King" && (
         <Icon
