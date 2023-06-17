@@ -59,6 +59,7 @@ export const GamePage = () => {
             size={tileGridSize}
             cells={ritho.tileGrid.toArray(TILE_GRID_BORDER_CELL_COUNT)}
             onSelectCell={tileMovement.onSelectTileGridCell}
+            placeableCoords={tileMovement.placeableCoords}
           />
           <TileStorage
             moveable={moveableTile}

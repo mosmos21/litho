@@ -31,11 +31,18 @@ export const usePieceMovement = (props: Props) => {
       if (!isCurrentPlayerTurn) return;
       if (!from) return;
 
-      props.onMovePiece(from, to);
-      setMoveableCoords([]);
-      setFrom(undefined);
+      if (props.ritho.pieceGrid.canMovePiece(props.ritho.tileGrid, from, to)) {
+        props.onMovePiece(from, to);
+        setMoveableCoords([]);
+        setFrom(undefined);
+      } else if (props.ritho.isMoveablePiece(to)) {
+        handleSelectFrom(to);
+      } else {
+        setMoveableCoords([]);
+        setFrom(undefined);
+      }
     },
-    [from, isCurrentPlayerTurn, props]
+    [from, isCurrentPlayerTurn, props, handleSelectFrom]
   );
 
   const handleClickOrTouch = useCallback(

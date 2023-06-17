@@ -9,10 +9,15 @@ type Props = {
 
 export const useTileMovement = (props: Props) => {
   const [tile, setTile] = useState<PlaceableTile>();
+  const [placeableCoords, setPlaceableCoords] = useState<Coord[]>([]);
 
-  const handleSelectTile = useCallback((tile: PlaceableTile) => {
-    setTile(tile);
-  }, []);
+  const handleSelectTile = useCallback(
+    (selectedTile: PlaceableTile) => {
+      setTile(selectedTile);
+      setPlaceableCoords(props.tileGrid.getPlaceableCoords());
+    },
+    [props.tileGrid]
+  );
 
   const handleSelectGridCell = useCallback(
     (coord: Coord) => {
@@ -20,11 +25,13 @@ export const useTileMovement = (props: Props) => {
 
       props.onPlaceTile(tile, coord);
       setTile(undefined);
+      setPlaceableCoords([]);
     },
     [tile, props]
   );
 
   return {
+    placeableCoords,
     onSelectTile: handleSelectTile,
     onSelectTileGridCell: handleSelectGridCell,
   };
