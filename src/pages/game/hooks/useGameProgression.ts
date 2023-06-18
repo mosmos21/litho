@@ -8,7 +8,7 @@ import {
   PlaceTileAction,
 } from "@/types/litho";
 import { useState, useEffect, useCallback } from "react";
-import { useLitho } from "@/pages/game/hooks/useLitho";
+import { UseLithoReturnType } from "@/pages/game/hooks/useLitho";
 import { usePlayerContext } from "@/providers/PlayerProvider";
 import {
   useGamesGameIdGameRecordsMutation,
@@ -16,12 +16,15 @@ import {
 } from "@/api";
 import { decodeAction, encodeAction } from "@/lib/litho/gameRecord";
 
-export const useGameProgression = (game: Game) => {
+type Props = UseLithoReturnType & {
+  game: Game;
+};
+export const useGameProgression = ({ game, litho, onAction }: Props) => {
   const { player } = usePlayerContext();
   const [currentPlayerColor, setCurrentPlayerColor] = useState<PieceColor>();
   const [currentGameRecordNumber, setCurrentGameRecordNumber] =
     useState<number>(0);
-  const { litho, onAction } = useLitho();
+
   const { gameRecords } = useGamesGameIdGameRecordsQuery(game.roomId);
   const { setGameRecord } = useGamesGameIdGameRecordsMutation();
 
@@ -60,9 +63,7 @@ export const useGameProgression = (game: Game) => {
   );
 
   useEffect(() => {
-    if (!isOngoingGame(game)) return;
-
-    if (!currentPlayerColor) {
+    if (isOngoingGame(game) && !currentPlayerColor) {
       setCurrentPlayerColor(
         game.turn["Black"].id === player.id ? "Black" : "White"
       );
@@ -72,13 +73,13 @@ export const useGameProgression = (game: Game) => {
   useEffect(() => {
     const records = gameRecords.slice(currentGameRecordNumber);
 
-    records.map(decodeAction).forEach(onAction);
+    onAction(...records.map(decodeAction));
     setCurrentGameRecordNumber(gameRecords.length);
   }, [gameRecords, currentGameRecordNumber, onAction]);
 
   return {
     currentPlayerColor,
-    litho,
+    gameRecords,
     onMovePiece: handleMovePiece,
     onPlaceTile: handlePlaceTile,
   };

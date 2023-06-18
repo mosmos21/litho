@@ -89,6 +89,7 @@ const placeTileAction = (
 
   let nextState = {
     ...state,
+    prevState: state,
     tileGrid: state.tileGrid.set(coord, tile),
     restTileCount: {
       ...state.restTileCount,
@@ -124,6 +125,7 @@ const movePieceAction = (
   const nextState = {
     ...state,
     ...consumeActionCount(state.turn, state.restActionCount),
+    prevState: state,
     pieceGrid: state.pieceGrid.move(from, to),
     currentActions: [],
     prevActions: [action],
@@ -148,9 +150,15 @@ const doAction =
     return build(state);
   };
 
+const undoAction = (state: RawLithoState) => () =>
+  build(state.prevState ?? state);
+
 export const build = (state: RawLithoState): Litho => ({
   ...state,
+  isFirstState: !state.prevState,
+  isLastState: Boolean(state.winner),
   action: doAction(state),
+  undoAction: undoAction(state),
   isValidAction: isValidAction(state),
   isMoveablePiece: isMoveablePiece(state),
 });
