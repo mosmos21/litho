@@ -13,6 +13,7 @@ import { useTileMovement } from "@/pages/game/hooks/useTileMovement.ts";
 import { useGame } from "@/pages/game/hooks/useGame";
 import { GameInformation } from "@/components/GameInformation";
 import { useElementSize } from "@/pages/game/hooks/useElementSize";
+import { isOngoingGame } from "@/utils/game.ts";
 
 export const GamePage = () => {
   const {
@@ -23,6 +24,7 @@ export const GamePage = () => {
     litho,
     onMovePiece,
     onPlaceTile,
+    gamePlayerProps,
   } = useGame();
   const pieceMovement = usePieceMovement({
     currentPlayerColor,
@@ -44,12 +46,13 @@ export const GamePage = () => {
             game={game}
             currentTurnColor={litho.turn}
             style={{ margin: "12px 0" }}
+            gamePlayerProps={gamePlayerProps}
           />
           <Board
             reverse={currentPlayerColor === "White"}
             size={boardSize}
             cells={litho.pieceGrid.toArray()}
-            moveableColor={moveablePieceColor}
+            moveableColor={isOngoingGame(game) ? moveablePieceColor : undefined}
             {...pieceMovement}
           />
         </Column>
@@ -62,7 +65,7 @@ export const GamePage = () => {
             placeableCoords={tileMovement.placeableCoords}
           />
           <TileStorage
-            moveable={moveableTile}
+            moveable={isOngoingGame(game) && moveableTile}
             tileCount={litho.restTileCount}
             onSelectTile={tileMovement.onSelectTile}
             style={{ width: "100%" }}
